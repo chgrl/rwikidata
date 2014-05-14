@@ -1,7 +1,10 @@
-require(httr, RJSONIO)
+require(httr)
+require(RJSONIO)
 
 # search wikidata entities
 wbSearchEntities <- function(search, lang="en", lim=10) {
+	
+	# GET("http://www.wikidata.org/w/api.php?action=wbsearchentities&search=bayreuth&language=en&format=json&type=item&limit=10")
 	
 	# prepare request
 	search <- paste("search", search, sep="=")
@@ -24,47 +27,10 @@ wbSearchEntities <- function(search, lang="en", lim=10) {
 }
 
 
-# print response of wbSearchEntities
-printResponse <- function(response, action, lim=NA) {
-	
-	if(action=="search") {	# SEARCH
-		# seach info
-		cat("Search term:\t\t", response$searchinfo, "\n")
-		
-		# number of results
-		num.results <- length(response$search)
-		cat("Number of results:\t", num.results, paste0("(limit set to ", lim, ")\n\n"))
-		
-		# results
-		if(num.results>0) {
-			cat("Results:\n")
-			for(i in 1:num.results) {
-				label <- response$search[[i]]["label"]
-				id <- response$search[[i]]["id"]
-				if(is.na(response$search[[i]]["description"])) desc <- "\n"
-				else desc <- paste("-", response$search[[i]]["description"], "\n")
-				cat(i, "\t", label, paste0("(", id, ")"), desc)
-			}
-		}
-	} else if(action=="entity") {	# ENTITY
-		# entity
-		cat("Entity:\t\t\t", response$entities[[1]]$labels[[1]]["value"], "\n")
-		
-		# aliases
-		num.alias <- length(response$entities[[1]]$aliases[[1]])
-		if(num.alias>0) {
-			al <- unlist(res$entities[[1]]$aliases[[1]])
-			cat("Aliases:\t\t", paste(al[names(al)=="value"], collapse=", "), "\n")
-		}
-		
-		# description
-		cat("Description:\t", response$entities[[1]]$descriptions[[1]]["value"], "\n")
-	}
-}
-
-
-# get wikidata entity
+# get entity
 wbGetEntities <- function(ent, lang="en") {
+	
+	# GET("http://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q3923&languages=en&format=json")
 		
 	# prepare request
 	id <- paste("ids", ent, sep="=")
@@ -82,5 +48,44 @@ wbGetEntities <- function(ent, lang="en") {
 	else {
 		printResponse(res, "entity")
 		invisible(res)
+	}
+}
+
+
+# print response of wbSearchEntities
+printResponse <- function(response, action, lim=NA) {
+	
+	if(action=="search") {	# SEARCH
+		# seach info
+		cat("Search term:\t\t", response$searchinfo$search, "\n")
+		
+		# number of results
+		num.results <- length(response$search)
+		cat("Number of results:\t", num.results, paste0("(limit set to ", lim, ")\n\n"))
+		
+		# results
+		if(num.results>0) {
+			cat("Results:\n")
+			for(i in 1:num.results) {
+				label <- response$search[[i]]$label
+				id <- response$search[[i]]$id
+				if(is.null(response$search[[i]]$description)) desc <- "\n"
+				else desc <- paste("-", response$search[[i]]$description, "\n")
+				cat(i, "\t", label, paste0("(", id, ")"), desc)
+			}
+		}
+	} else if(action=="entity") {	# ENTITY
+		# entity
+		cat("Entity:\t\t\t", response$entities[[1]]$labels[[1]]$value, "\n")
+		
+		# aliases
+		num.alias <- length(response$entities[[1]]$aliases[[1]])
+		if(num.alias>0) {
+			al <- unlist(res$entities[[1]]$aliases[[1]])
+			cat("Aliases:\t\t", paste(al[names(al)=="value"], collapse=", "), "\n")
+		}
+		
+		# description
+		cat("Description:\t", response$entities[[1]]$descriptions[[1]]$value, "\n")
 	}
 }
