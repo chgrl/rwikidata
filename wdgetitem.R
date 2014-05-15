@@ -1,10 +1,10 @@
 require(httr)
 
-wbgetitem <- function(id, ...) UseMethod("wbgetitem")
+wdgetitem <- function(id, ...) UseMethod("wdgetitem")
 
 
 # get wikidata item
-wbgetitem.default <- function(id, lang="en") {
+wdgetitem.default <- function(id, lang="en") {
 			
 	# prepare request
 	id <- paste("ids", id, sep="=")
@@ -20,7 +20,7 @@ wbgetitem.default <- function(id, lang="en") {
 	
 	if(is.null(item$success)) warning("failed\n", "code: ", item$error[[1]], " - ", item$error[[2]]) 
 	else {
-		class(item) <- "wbgetitem"
+		class(item) <- "wditem"
 		print(item)
 		invisible(item)
 	}
@@ -28,7 +28,7 @@ wbgetitem.default <- function(id, lang="en") {
 
 
 # print item info
-print.wbgetitem <- function(item) {
+print.wditem <- function(item) {
 	
 	cat("\n\tWikidata item\n\n")
 	

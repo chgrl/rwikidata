@@ -1,9 +1,9 @@
 require(httr)
 
-wbsearch <- function(search, ...) UseMethod("wbsearch")
+wdsearch <- function(search, ...) UseMethod("wdsearch")
 
 # search wikidata items
-wbsearch.default <- function(search, lang="en", lim=10) {
+wdsearch.default <- function(search, lang="en", lim=10) {
 		
 	# prepare request
 	search <- paste("search", search, sep="=")
@@ -20,14 +20,14 @@ wbsearch.default <- function(search, lang="en", lim=10) {
 	
 	if(is.null(result$success)) warning("search failed\n", "code: ", result$error[[1]], " - ", result$error[[2]]) 
 	else {
-		class(result) <- "wbsearch"
+		class(result) <- "wdsearch"
 		print(result)
 		invisible(result)
 	}
 }
 
 # print search results
-print.wbsearch <- function(result) {
+print.wdsearch <- function(result) {
 	
 	cat("\n\tWikidata search\n\n")
 	
