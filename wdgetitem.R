@@ -33,7 +33,7 @@ print.wditem <- function(item) {
 	cat("\n\tWikidata item\n\n")
 	
 	# label
-	cat("label:", item$entities[[1]]$labels[[1]]$value, "\n")
+	cat("Label:", item$entities[[1]]$labels[[1]]$value, "\n")
 	
 	# aliases
 	num.alias <- length(item$entities[[1]]$aliases[[1]])
