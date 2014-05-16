@@ -5,7 +5,7 @@ getclaim <- function(item, claim, ...) UseMethod("getclaim")
 
 
 # get claims of wikidata item by api request
-wdgetclaim.default <- function(id, claim) {
+wdgetclaim.default <- function(id, claim, print=TRUE) {
 	
 	if(is.numeric(id)) id <- paste0("Q", id)
 	
@@ -25,20 +25,20 @@ wdgetclaim.default <- function(id, claim) {
 	if(length(claim$claims)==0) warning("no claims found") 
 	else {
 		class(claim) <- "wdclaim"
-		print(claim)
+		if(print) print(claim)
 		invisible(claim)
 	}
 }
 
 
 # get claims of wikidata item
-getclaim.default <- function(item, claim) {
+getclaim.default <- function(item, claim, print=TRUE) {
 
 	if(is.null(item$entities[[1]]$claims)) warning("no claims found in item", substitute(item))
 	else {
 		if(missing(claim)) {	# get all claims
 			wdclaim <- item$entities[[1]]$claims
-		} else if(length(claims)==1) {	# get specific claim
+		} else if(length(claim)==1) {	# get specific claim
 			wdclaim <- item$entities[[1]]$claims[[claim]]
 		} else {	# get set of claims
 			wdclaim <- list(item$entities[[1]]$claims[[claim[1]]])
@@ -46,7 +46,7 @@ getclaim.default <- function(item, claim) {
 		}
 		
 		class(wdclaim) <- "wdclaim"
-		print(wdclaim)
+		if(print) print(wdclaim)
 		invisible(wdclaim)
 	}
 }
@@ -57,5 +57,16 @@ print.wdclaim <- function(claim) {
 	
 	cat("\n\tWikidata claim\n\n")
 	
-	# todo
+	# get ids and names
+	claim.num <- length(claim$claims)
+	claim.id <- names(claim$claims)
+	claim.name <- NULL
+	if(claim.num>0) for(i in 1:claim.num) claim.name <- append(claim.name, wdgetproperty(claim.id[i], print=FALSE))
+	else stop("no claims found")
+	
+	# prepare output
+	claim.tbl <- cbind(claim.id, claim.name)
+	
+	# print
+	print(claim.tbl, quote=FALSE)
 }

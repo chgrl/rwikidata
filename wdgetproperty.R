@@ -4,7 +4,7 @@ wdgetproperty <- function(id, ...) UseMethod("wdgetproperty")
 
 
 # get wikidata property
-wdgetproperty.default <- function(id, lang="en") {
+wdgetproperty.default <- function(id, lang="en", print=TRUE) {
 	
 	# https://www.wikidata.org/wiki/Property%3aP246?uselang=en
 	
@@ -31,7 +31,7 @@ wdgetproperty.default <- function(id, lang="en") {
 	if(any(prop.val.desc=="")) warning("parsing error")
 	else {
 		class(prop.val.desc) <- "wdproperty"
-		print(prop.val.desc)
+		if(print) print(prop.val.desc)
 		invisible(prop.val.desc)
 	}
 }
@@ -42,9 +42,5 @@ print.wdproperty <- function(property) {
 	
 	cat("\n\tWikidata property\n\n")
 	
-	# property
-	cat("Property:", property[1], "\n")
-	
-	# description
-	cat("Description:", property[2], "\n")
+	# todo
 }

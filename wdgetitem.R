@@ -4,7 +4,7 @@ wdgetitem <- function(id, ...) UseMethod("wdgetitem")
 
 
 # get wikidata item
-wdgetitem.default <- function(id, lang="en") {
+wdgetitem.default <- function(id, lang="en", print=TRUE) {
 	
 	if(is.numeric(id)) id <- paste0("Q", id)
 			
@@ -23,7 +23,7 @@ wdgetitem.default <- function(id, lang="en") {
 	if(is.null(item$success)) warning("failed\n", "code: ", item$error[[1]], " - ", item$error[[2]]) 
 	else {
 		class(item) <- "wditem"
-		print(item)
+		if(print) print(item)
 		invisible(item)
 	}
 }
