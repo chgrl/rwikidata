@@ -7,6 +7,8 @@ getclaim <- function(item, claim, ...) UseMethod("getclaim")
 # get claims of wikidata item by api request
 wdgetclaim.default <- function(id, claim) {
 	
+	if(is.numeric(id)) id <- paste0("Q", id)
+	
 	# prepare request
 	if(missing(claim) && !missing(id)) {	# get all claims
 		url <- paste0("http://www.wikidata.org/w/api.php?action=wbgetclaims&format=json&entity=", id)

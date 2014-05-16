@@ -7,6 +7,8 @@ wdgetproperty <- function(id, ...) UseMethod("wdgetproperty")
 wdgetproperty.default <- function(id, lang="en") {
 	
 	# https://www.wikidata.org/wiki/Property%3aP246?uselang=en
+	
+	if(is.numeric(id)) id <- paste0("P", id)
 			
 	# prepare request
 	url <- paste0("https://www.wikidata.org/wiki/Property%3a", id, "?uselang=", lang)

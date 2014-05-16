@@ -5,6 +5,8 @@ wdgetitem <- function(id, ...) UseMethod("wdgetitem")
 
 # get wikidata item
 wdgetitem.default <- function(id, lang="en") {
+	
+	if(is.numeric(id)) id <- paste0("Q", id)
 			
 	# prepare request
 	id <- paste("ids", id, sep="=")
