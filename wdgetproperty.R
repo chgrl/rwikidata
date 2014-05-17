@@ -42,5 +42,9 @@ print.wdproperty <- function(property) {
 	
 	cat("\n\tWikidata property\n\n")
 	
-	# todo
+	# property
+	cat("Property:", property[1], "\n")
+	
+	# description
+	cat("Description:", property[2], "\n")
 }
