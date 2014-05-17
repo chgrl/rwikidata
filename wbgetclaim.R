@@ -63,6 +63,7 @@ print.wdclaim <- function(claim) {
 	claim.name <- NULL
 	if(claim.num>0) for(i in 1:claim.num) claim.name <- append(claim.name, wdgetproperty(claim.id[i], print=FALSE))
 	else stop("no claims found")
+	claim.name[nchar(claim.name)>30] <- paste(substr(claim.name[nchar(claim.name)>30], 1, 30), "...")
 	
 	# prepare output
 	claim.tbl <- cbind(claim.id, claim.name)
