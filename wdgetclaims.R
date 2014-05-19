@@ -1,11 +1,11 @@
 require(httr)
 
-wdgetclaim <- function(id, guid, ...) UseMethod("wdgetclaim")
-getclaim <- function(item, claim, ...) UseMethod("getclaim")
+wdgetclaims <- function(id, guid, ...) UseMethod("wdgetclaims")
+getclaims <- function(item, claim, ...) UseMethod("getclaims")
 
 
 # get claims of wikidata item by api request
-wdgetclaim.default <- function(id, claim, print=TRUE) {
+wdgetclaims.default <- function(id, claim, print=TRUE) {
 	
 	if(is.numeric(id)) id <- paste0("Q", id)
 	
@@ -22,9 +22,10 @@ wdgetclaim.default <- function(id, claim, print=TRUE) {
 	# parse
 	claim <- httr::content(raw, as="parsed")
 	
-	if(length(claim$claims)==0) warning("no claims found") 
+	if(length(claim$claims)==0) warning("no claims found")
 	else {
-		class(claim) <- "wdclaim"
+		claim <- claim$claims
+		class(claim) <- "wdclaims"
 		if(print) print(claim)
 		invisible(claim)
 	}
@@ -32,7 +33,7 @@ wdgetclaim.default <- function(id, claim, print=TRUE) {
 
 
 # get claims of wikidata item
-getclaim.default <- function(item, claim, print=TRUE) {
+getclaims.default <- function(item, claim, print=TRUE) {
 
 	if(is.null(item$entities[[1]]$claims)) warning("no claims found in item", substitute(item))
 	else {
@@ -45,7 +46,7 @@ getclaim.default <- function(item, claim, print=TRUE) {
 			for(i in 2:length(claim)) wdclaim[[i]] <- item$entities[[1]]$claims[[claim[i]]]
 		}
 		
-		class(wdclaim) <- "wdclaim"
+		class(wdclaim) <- "wdclaims"
 		if(print) print(wdclaim)
 		invisible(wdclaim)
 	}
@@ -53,21 +54,33 @@ getclaim.default <- function(item, claim, print=TRUE) {
 
 
 # print claim info
-print.wdclaim <- function(claim) {
-	
-	cat("\n\tWikidata claim\n\n")
+print.wdclaims <- function(claim) {
 	
 	# get ids and names
-	claim.num <- length(claim$claims)
-	claim.id <- names(claim$claims)
+	claim.num <- length(claim)
+	claim.id <- names(claim)
 	claim.name <- NULL
 	if(claim.num>0) for(i in 1:claim.num) claim.name <- append(claim.name, wdgetproperty(claim.id[i], print=FALSE)[1])
 	else stop("no claims found")
-	claim.name[nchar(claim.name)>30] <- paste(substr(claim.name[nchar(claim.name)>30], 1, 30), "...")
+	claim.name[nchar(claim.name)>25] <- paste(substr(claim.name[nchar(claim.name)>25], 1, 25), "...")
+	
+	# get guids
+	claim.guid <- NULL
+	if(claim.num>0) for(i in 1:claim.num) {
+		claim.set <- claim[[i]]
+		#guid <- NULL
+		#for(j in 1:length(claim.set)) guid <- append(guid, claim.set[[j]]$id)
+		#guid <- paste(guid, collapse=", ")
+		guid <- claim.set[[1]]$id
+		if(length(claim.set)>1) guid <- paste0(guid, ", ...")
+		claim.guid <- append(claim.guid, guid)
+	}
 	
 	# prepare output
-	claim.tbl <- cbind(claim.id, claim.name)
-	
+	claim.tbl <- as.data.frame(cbind(claim.id, claim.name, claim.guid))
+	names(claim.tbl) <- c("Property", "Claim", "GUID")
+		
 	# print
-	print(claim.tbl, quote=FALSE)
+	cat("\n\tWikidata claims\n\n")
+	print(claim.tbl, quote=FALSE, right=FALSE, row.names=FALSE)
 }
