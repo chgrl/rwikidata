@@ -1,20 +1,16 @@
 require(httr)
 
-wdgetclaims <- function(id, guid, ...) UseMethod("wdgetclaims")
-getclaims <- function(item, claim, ...) UseMethod("getclaims")
+wdgetclaims <- function(id, ...) UseMethod("wdgetclaims")
+getclaims <- function(item, ...) UseMethod("getclaims")
 
 
 # get claims of wikidata item by api request
-wdgetclaims.default <- function(id, claim, print=TRUE) {
+wdgetclaims.default <- function(id, print=TRUE) {
 	
 	if(is.numeric(id)) id <- paste0("Q", id)
 	
 	# prepare request
-	if(missing(claim) && !missing(id)) {	# get all claims
-		url <- paste0("http://www.wikidata.org/w/api.php?action=wbgetclaims&format=json&entity=", id)
-	} else if(!missing(claim) && missing(id)) {	# get specific claim
-		url <- paste0("http://www.wikidata.org/w/api.php?action=wbgetclaims&format=json&claim=", claim)
-	}
+	url <- paste0("http://www.wikidata.org/w/api.php?action=wbgetclaims&format=json&entity=", id)
 	
 	# execute request
 	raw <- GET(url, config=add_headers("User-agent"="rwikidata"))
@@ -33,18 +29,12 @@ wdgetclaims.default <- function(id, claim, print=TRUE) {
 
 
 # get claims of wikidata item
-getclaims.default <- function(item, claim, print=TRUE) {
+getclaims.default <- function(item, print=TRUE) {
 
 	if(is.null(item$entities[[1]]$claims)) warning("no claims found in item", substitute(item))
 	else {
-		if(missing(claim)) {	# get all claims
-			wdclaim <- item$entities[[1]]$claims
-		} else if(length(claim)==1) {	# get specific claim
-			wdclaim <- item$entities[[1]]$claims[[claim]]
-		} else {	# get set of claims
-			wdclaim <- list(item$entities[[1]]$claims[[claim[1]]])
-			for(i in 2:length(claim)) wdclaim[[i]] <- item$entities[[1]]$claims[[claim[i]]]
-		}
+		# get claim
+		wdclaim <- item$entities[[1]]$claims
 		
 		class(wdclaim) <- "wdclaims"
 		if(print) print(wdclaim)
