@@ -55,19 +55,23 @@ print.wdclaims <- function(claim) {
 	claim.name[nchar(claim.name)>25] <- paste(substr(claim.name[nchar(claim.name)>25], 1, 25), "...")
 	
 	# get guids
-	claim.guid <- NULL
+	claim.guid <- list()
 	if(claim.num>0) for(i in 1:claim.num) {
 		claim.set <- claim[[i]]
-		#guid <- NULL
-		#for(j in 1:length(claim.set)) guid <- append(guid, claim.set[[j]]$id)
-		#guid <- paste(guid, collapse=", ")
-		guid <- claim.set[[1]]$id
-		if(length(claim.set)>1) guid <- paste0(guid, ", ...")
-		claim.guid <- append(claim.guid, guid)
+		guid <- NULL
+		for(j in 1:length(claim.set)) guid <- append(guid, claim.set[[j]]$id)
+		claim.guid[[i]] <- guid
 	}
 	
 	# prepare output
-	claim.tbl <- as.data.frame(cbind(claim.id, claim.name, claim.guid))
+	claim.tbl <- c(claim.id[1], claim.name[1], claim.guid[[1]][1])
+	if(length(claim.guid[[1]])>1) for(j in 2:length(claim.guid[[1]])) claim.tbl <- rbind(claim.tbl, c("", "", claim.guid[[1]][j]))
+	if(length(claim.id)>1) for(i in 2:length(claim.id)) {
+		claim.tbl <- rbind(claim.tbl, c(claim.id[i], claim.name[i], claim.guid[[i]][1]))
+		if(length(claim.guid[[i]])>1) for(j in 2:length(claim.guid[[i]])) claim.tbl <- rbind(claim.tbl, c("", "", claim.guid[[i]][j]))
+	}
+	row.names(claim.tbl) <- c(1:nrow(claim.tbl))
+	claim.tbl <- as.data.frame(claim.tbl)
 	names(claim.tbl) <- c("Property", "Claim", "GUID")
 		
 	# print
