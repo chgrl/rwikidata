@@ -40,15 +40,19 @@ wdguid.default <- function(guid, lang="en", print=TRUE) {
 	} else if(type=="globe-coordinate") {
 		content <- c(claim[[1]][[1]]$mainsnak$datavalue$value$latitude, claim[[1]][[1]]$mainsnak$datavalue$value$longitude)
 	} else if(type=="commonsMedia") {
-		url <- paste0("http://commons.wikimedia.org/wiki/File:", claim[[1]][[1]]$mainsnak$datavalue$value)
-		content <- url
+		file <- claim[[1]][[1]]$mainsnak$datavalue$value
+		url <- paste0("http://commons.wikimedia.org/wiki/File:", file) # not the right URL!!!
+		download.file(url=url, destfile=file.path(tempdir(), file))
+		out <- paste0(file.path(getwd(), head(strsplit(file, ".", fixed=TRUE)[[1]], -1)), ".png")
+		system(paste("convert", file.path(tempdir(), file), out))
+		content <- out
 	} else if(type=="quantity") {
 		content <- claim[[1]][[1]]$mainsnak$datavalue$value
 	}
 	
 	content <- list(id=item, property=prop, type=type, content=content)
 	class(content) <- "wdcontent"
-	#if(print) print(content)
+	if(print) print(content)
 	invisible(content)
 }
 
@@ -59,6 +63,6 @@ wdguid.default <- function(guid, lang="en", print=TRUE) {
 
 
 # print content
-#print.wdcontent <- function(content) {
-#	
-#}
+print.wdcontent <- function(content) {
+	print(content)
+}
