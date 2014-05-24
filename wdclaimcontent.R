@@ -58,7 +58,8 @@ wdguid.default <- function(guid, lang="en", print=TRUE) {
 		# download image and convert to png
 		download.file(url=paste0("http:", img.url), destfile=file.path(tempdir(), fname))
 		out <- paste0(file.path(getwd(), head(strsplit(fname, ".", fixed=TRUE)[[1]], -1)), ".png")
-		system(paste("convert", file.path(tempdir(), fname), out))
+		# ImageMagick required
+		if(tolower(tail(strsplit(fname, ".", fixed=TRUE)[[1]], 1))!="png") system(paste("convert", file.path(tempdir(), fname), out))
 		content <- out
 	} else if(type=="quantity") { # quantity
 		content <- claim[[1]][[1]]$mainsnak$datavalue$value
