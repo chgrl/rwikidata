@@ -25,32 +25,46 @@ wdguid.default <- function(guid, lang="en", print=TRUE) {
 	
 	# get content
 	content <- NULL
-	if(type=="string" || type=="url") {
+	if(type=="string" || type=="url") { # string
 		content <- claim[[1]][[1]]$mainsnak$datavalue$value
-	} else if(type=="wikibase-item") {
+	} else if(type=="wikibase-item") { # Wikidata item
 		item.id <- paste0("Q", claim[[1]][[1]]$mainsnak$datavalue$value$"numeric-id")
 		item.label <- wdgetitem(item.id, lang, print=FALSE)$entities[[1]]$labels[[1]]$value
 		content <- c(item.id, item.label)
-	} else if(type=="time") {
+	} else if(type=="time") { # time
 		time <- claim[[1]][[1]]$mainsnak$datavalue$value$time
 		time <- gsub("+", "", time, fixed=TRUE)
 		time <- gsub("^0+", "", time)
 		if(substr(time, 1,1)=="-") time <- paste0("0", time)
 		content <- strptime(strsplit(time, "Z")[[1]][1], "%Y-%m-%dT%H:%M:%S")
-	} else if(type=="globe-coordinate") {
+	} else if(type=="globe-coordinate") { # geographic coordinate
 		content <- c(claim[[1]][[1]]$mainsnak$datavalue$value$latitude, claim[[1]][[1]]$mainsnak$datavalue$value$longitude)
-	} else if(type=="commonsMedia") {
+	} else if(type=="commonsMedia") { # Wiki commons
 		file <- claim[[1]][[1]]$mainsnak$datavalue$value
-		url <- paste0("http://commons.wikimedia.org/wiki/File:", file) # not the right URL!!!
-		download.file(url=url, destfile=file.path(tempdir(), file))
-		out <- paste0(file.path(getwd(), head(strsplit(file, ".", fixed=TRUE)[[1]], -1)), ".png")
-		system(paste("convert", file.path(tempdir(), file), out))
+		# get commons website
+		url <- paste0("http://commons.wikimedia.org/wiki/File:", file, "?uselang=en")
+		url <- gsub(" ", "%20", url)
+		raw <- GET(url, config=add_headers("User-agent"="rwikidata"))
+		web <- httr::content(raw, as="text")
+		
+		# get image url
+		web.list <- strsplit(web, "\n")[[1]]
+		img.url <- web.list[grep("fullMedia", web.list)]
+		#<div class=\"fullMedia\"><a href=\"//upload.wikimedia.org/wikipedia/commons/b/ba/Flag_of_Germany.svg\" class=\"internal\" title=\"Flag of Germany.svg\">Original file</a>
+		img.url <- sub(".*class=\"fullMedia\"><a href=\"", "", img.url)
+		img.url <- sub("\" class=\"internal\".*", "", img.url)
+		fname <- tail(strsplit(img.url, "/", fixed=TRUE)[[1]], 1)
+		
+		# download image and convert to png
+		download.file(url=paste0("http:", img.url), destfile=file.path(tempdir(), fname))
+		out <- paste0(file.path(getwd(), head(strsplit(fname, ".", fixed=TRUE)[[1]], -1)), ".png")
+		system(paste("convert", file.path(tempdir(), fname), out))
 		content <- out
-	} else if(type=="quantity") {
+	} else if(type=="quantity") { # quantity
 		content <- claim[[1]][[1]]$mainsnak$datavalue$value
 	}
 	
-	content <- list(id=item, property=prop, type=type, content=content)
+	content <- list(guid=guid, item=item, property=prop, type=type, content=content)
 	class(content) <- "wdcontent"
 	if(print) print(content)
 	invisible(content)
@@ -63,6 +77,33 @@ wdguid.default <- function(guid, lang="en", print=TRUE) {
 
 
 # print content
-print.wdcontent <- function(content) {
-	print(content)
+print.wdcontent <- function(content, open.ext=TRUE) {
+	cat("\n\tWikidata claim content\n\n")
+	cat(paste("GUID:", content$guid, "\n"))
+	cat(paste("Item:", content$id, "\n"))
+	cat(paste("Property:", content$property, "\n"))
+	cat(paste("Type:", content$type, "\n\n"))
+	
+	if(content$type=="string" || content$type=="time" || content$type=="quantity") {
+		cat(content$content, "\n")
+	} else if(content$type=="url") {
+		cat(content$content, "\n")
+		if(open.ext) browseURL(content$content)
+	} else if(content$type=="wikibase-item") {
+		cat(content$content[1], "-", content$content[2], "\n")
+	} else if(content$type=="globe-coordinate") {
+		cat(content$content[1], ",", content$content[2], "\n")
+		if(open.ext && isnumeric(content$content[1]) && isnumeric(content$content[2])) browseURL(paste0("http://www.openstreetmap.org/#map=3", content$content[1], "/", content$content[2]))
+	} else if(content$type=="commonsMedia") {
+		cat("PNG image:", content$content, "\n")
+		if(open.ext) {
+			stopifnot(require(png))
+			img <- readPNG(content$content)
+			dim.img <- dim(img)
+			dev.new(width=5*dim.img[2]/dim.img[1], height=5)
+			par(mar=c(0,0,0,0))
+			plot(c(0, dim.img[2]), c(0, dim.img[1]), type="n", xlab="", ylab="")
+			rasterImage(img, 1, 1, dim.img[2], dim.img[1])
+		}
+	}
 }
