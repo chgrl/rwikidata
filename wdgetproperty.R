@@ -1,10 +1,27 @@
-require(httr)
 
-wdgetproperty <- function(id, ...) UseMethod("wdgetproperty")
+#' Get a Wikidata property
+#'
+#' @param id The Wikidata property id, as string (including the 'P') or integer value (without the 'P')
+#' @param lang Language abbreviation (ISO language codes), as string - default is \code{"en"}
+#' @param print Logical - if \code{TRUE} (default) the property information are printed
+#' @return A vector of two: property value and property description
+#' @export
+#' @examples
+#' \dontrun{
+#' wdgetproperty(31)
+#' prop <- wdgetproperty(id="p31", lang="pl", print=FALSE)
+#' }
+wdgetproperty <- function(id, lang="en", print=TRUE) UseMethod("wdgetproperty")
 
 
-# get wikidata property
-wdgetproperty.default <- function(id, lang="en", print=TRUE) {
+#' Get a Wikidata property - default method
+#'
+#' @import httr
+#' @param id The Wikidata property id, as string (including the 'P') or integer value (without the 'P')
+#' @param lang Language abbreviation (ISO language codes), as string
+#' @param print Logical - if \code{TRUE} the property information are printed
+#' @return A vector of two: property value and property description
+wdgetproperty.default <- function(id, lang, print) {
 	
 	# https://www.wikidata.org/wiki/Property%3aP246?uselang=en
 	
@@ -37,7 +54,9 @@ wdgetproperty.default <- function(id, lang="en", print=TRUE) {
 }
 
 
-# print item info
+#' Print method for wdproperty
+#'
+#' @param property wdproperty object
 print.wdproperty <- function(property) {
 	
 	cat("\n\tWikidata property\n\n")

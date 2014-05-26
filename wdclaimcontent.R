@@ -1,11 +1,33 @@
-require(httr)
 
-wdclaimcontent <- function(guid, ...) UseMethod("wdguid")
-#wdclaimcontent <- function(id, prop, ...) UseMethod("wdidprop")
+#' Get content of a specific claim
+#'
+#' @param guid The Wikidata claim guid, as string
+#' @param lang Language abbreviation (ISO language codes), as string - default is \code{"en"}
+#' @param print Logical - if \code{TRUE} (default) the claim content is printed
+#' @param ... Arguments passed to methods, e.g. \code{open.ext} - if \code{TRUE} (default) external sources of the claim like images or URLs are opened
+#' @return A list containing meta information of the claim and its content
+#' @seealso \code{\link{wdgetclaims}} to get a list of all claims
+#' @export
+#' @examples
+#' \dontrun{
+#' wdclaimcontent("q144786$25DC2C5E-D59F-4C9B-A307-1DBDF3215576")
+#' zapa.coa <- wdgetclaimcontent(guid="q144786$25DC2C5E-D59F-4C9B-A307-1DBDF3215576", 
+#'   lang="pl", print=FALSE, open.ext=FALSE)
+#' }
+wdclaimcontent <- function(guid, lang="en", print=TRUE, ...) UseMethod("wdclaimcontent")
+
+#wdclaimcontent <- function(id, prop, lang="en", print=TRUE, ...) UseMethod("wdclaimcontent")
 
 
-# get content of specific claim
-wdguid.default <- function(guid, lang="en", print=TRUE) {
+#' Get content of a specific claim - default method
+#'
+#' @import httr
+#' @param guid The Wikidata claim guid, as string
+#' @param lang Language abbreviation (ISO language codes), as string
+#' @param print Logical - if \code{TRUE} the claim content is printed
+#' @param ... Arguments passed to methods
+#' @return A list containing meta information of the claim and its content
+wdclaimcontent.default <- function(guid, lang, print, ...) {
 		
 	# prepare request
 	url <- paste0("http://www.wikidata.org/w/api.php?action=wbgetclaims&format=json&claim=", guid)
@@ -67,17 +89,20 @@ wdguid.default <- function(guid, lang="en", print=TRUE) {
 	
 	content <- list(guid=guid, item=item, property=prop, type=type, content=content)
 	class(content) <- "wdcontent"
-	if(print) print(content)
+	if(print) print(content, ...)
 	invisible(content)
 }
 
 
-#wdidprop.default <- function(id, prop, print=TRUE) {
+#wdclaimcontent.idprop <- function(id, prop, print=TRUE) {
 #	
 #}
 
 
-# print content
+#' Print method for wdcontent
+#'
+#' @param content wdcontent object from \code{\link{wdclaimcontent}}
+#' @param open.ext Logical - if \code{TRUE} external sources of the claim like images or URLs are opened
 print.wdcontent <- function(content, open.ext=TRUE) {
 	cat("\n\tWikidata claim content\n\n")
 	cat(paste("GUID:", content$guid, "\n"))
@@ -94,7 +119,7 @@ print.wdcontent <- function(content, open.ext=TRUE) {
 		cat(content$content[1], "-", content$content[2], "\n")
 	} else if(content$type=="globe-coordinate") {
 		cat(content$content[1], ",", content$content[2], "\n")
-		if(open.ext && isnumeric(content$content[1]) && isnumeric(content$content[2])) browseURL(paste0("http://www.openstreetmap.org/#map=3", content$content[1], "/", content$content[2]))
+		if(open.ext && is.numeric(content$content[1]) && is.numeric(content$content[2])) browseURL(paste0("http://www.openstreetmap.org/#map=3", content$content[1], "/", content$content[2]))
 	} else if(content$type=="commonsMedia") {
 		cat("PNG image:", content$content, "\n")
 		if(open.ext) {

@@ -1,10 +1,28 @@
-require(httr)
 
-wdgetitem <- function(id, ...) UseMethod("wdgetitem")
+#' Get a Wikidata item
+#'
+#' @param id The Wikidata item id, as string (including the 'Q') or integer value (without the 'Q')
+#' @param lang Language abbreviation (ISO language codes), as string - default is \code{"en"}
+#' @param print Logical - if \code{TRUE} (default) the item information are printed
+#' @return A list with basic information about the item
+#' @export
+#' @examples
+#' \dontrun{
+#' wdgetitem(144786)
+#' zapa.item <- wdgetitem(id="q144786", lang="pl", print=FALSE)
+#' wdgetitem() # get random item
+#' }
+wdgetitem <- function(id, lang="en", print=TRUE) UseMethod("wdgetitem")
 
 
-# get wikidata item
-wdgetitem.default <- function(id, lang="en", print=TRUE) {
+#' Get a Wikidata item - default method
+#'
+#' @import httr
+#' @param id The Wikidata item id, as string (including the 'Q') or integer value (without the 'Q')
+#' @param lang Language abbreviation (ISO language codes), as string
+#' @param print Logical - if \code{TRUE} the item information are printed
+#' @return A list with basic information about the item
+wdgetitem.default <- function(id, lang, print) {
 	
 	if(missing(id)) { # get random item
 		url <- paste0("http://www.wikidata.org/wiki/Special:Statistics?uselang=en")
@@ -43,7 +61,9 @@ wdgetitem.default <- function(id, lang="en", print=TRUE) {
 }
 
 
-# print item info
+#' Print method for wditem
+#'
+#' @param item wditem object
 print.wditem <- function(item) {
 	
 	cat("\n\tWikidata item\n\n")
