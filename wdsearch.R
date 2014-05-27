@@ -23,6 +23,7 @@ wdsearch <- function(search, lang="en", lim=10, print=TRUE) UseMethod("wdsearch"
 #' @param lim Maximal number of results, as integer
 #' @param print Logical - if \code{TRUE} the search results are printed
 #' @return A list of search results and meta information
+#' @keywords internal
 wdsearch.default <- function(search, lang, lim, print) {
 		
 	# prepare request
@@ -50,6 +51,7 @@ wdsearch.default <- function(search, lang, lim, print) {
 #' Print method for wdsearch
 #'
 #' @param result wdsearch object with search results
+#' @keywords internal
 print.wdsearch <- function(result) {
 	
 	cat("\n\tWikidata search\n\n")

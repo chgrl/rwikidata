@@ -1,7 +1,7 @@
 
 #' Get a Wikidata property
 #'
-#' @param id The Wikidata property id, as string (including the 'P') or integer value (without the 'P')
+#' @param pid The Wikidata property id, as string (including the 'P') or integer value (without the 'P')
 #' @param lang Language abbreviation (ISO language codes), as string - default is \code{"en"}
 #' @param print Logical - if \code{TRUE} (default) the property information are printed
 #' @return A vector of two: property value and property description
@@ -9,26 +9,27 @@
 #' @examples
 #' \dontrun{
 #' wdgetproperty(31)
-#' prop <- wdgetproperty(id="p31", lang="pl", print=FALSE)
+#' prop <- wdgetproperty(pid="p31", lang="pl", print=FALSE)
 #' }
-wdgetproperty <- function(id, lang="en", print=TRUE) UseMethod("wdgetproperty")
+wdgetproperty <- function(pid, lang="en", print=TRUE) UseMethod("wdgetproperty")
 
 
 #' Get a Wikidata property - default method
 #'
 #' @import httr
-#' @param id The Wikidata property id, as string (including the 'P') or integer value (without the 'P')
+#' @param pid The Wikidata property id, as string (including the 'P') or integer value (without the 'P')
 #' @param lang Language abbreviation (ISO language codes), as string
 #' @param print Logical - if \code{TRUE} the property information are printed
 #' @return A vector of two: property value and property description
-wdgetproperty.default <- function(id, lang, print) {
+#' @keywords internal
+wdgetproperty.default <- function(pid, lang, print) {
 	
 	# https://www.wikidata.org/wiki/Property%3aP246?uselang=en
 	
-	if(is.numeric(id)) id <- paste0("P", id)
+	if(is.numeric(pid)) pid <- paste0("P", pid)
 			
 	# prepare request
-	url <- paste0("https://www.wikidata.org/wiki/Property%3a", id, "?uselang=", lang)
+	url <- paste0("https://www.wikidata.org/wiki/Property%3a", pid, "?uselang=", lang)
 	
 	# execute request
 	raw <- GET(url, config=add_headers("User-agent"="rwikidata"))
@@ -57,6 +58,7 @@ wdgetproperty.default <- function(id, lang, print) {
 #' Print method for wdproperty
 #'
 #' @param property wdproperty object
+#' @keywords internal
 print.wdproperty <- function(property) {
 	
 	cat("\n\tWikidata property\n\n")

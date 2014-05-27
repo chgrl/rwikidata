@@ -11,12 +11,12 @@
 #' @examples
 #' \dontrun{
 #' wdclaimcontent("q144786$25DC2C5E-D59F-4C9B-A307-1DBDF3215576")
-#' zapa.coa <- wdgetclaimcontent(guid="q144786$25DC2C5E-D59F-4C9B-A307-1DBDF3215576", 
+#' zapa.coa <- wdclaimcontent(guid="q144786$25DC2C5E-D59F-4C9B-A307-1DBDF3215576", 
 #'   lang="pl", print=FALSE, open.ext=FALSE)
 #' }
 wdclaimcontent <- function(guid, lang="en", print=TRUE, ...) UseMethod("wdclaimcontent")
 
-#wdclaimcontent <- function(id, prop, lang="en", print=TRUE, ...) UseMethod("wdclaimcontent")
+#wdclaimcontent <- function(qid, pid, lang="en", print=TRUE, ...) UseMethod("wdclaimcontent")
 
 
 #' Get content of a specific claim - default method
@@ -27,6 +27,7 @@ wdclaimcontent <- function(guid, lang="en", print=TRUE, ...) UseMethod("wdclaimc
 #' @param print Logical - if \code{TRUE} the claim content is printed
 #' @param ... Arguments passed to methods
 #' @return A list containing meta information of the claim and its content
+#' @keywords internal
 wdclaimcontent.default <- function(guid, lang, print, ...) {
 		
 	# prepare request
@@ -94,7 +95,7 @@ wdclaimcontent.default <- function(guid, lang, print, ...) {
 }
 
 
-#wdclaimcontent.idprop <- function(id, prop, print=TRUE) {
+#wdclaimcontent.idprop <- function(qid, pid, print=TRUE) {
 #	
 #}
 
@@ -102,11 +103,12 @@ wdclaimcontent.default <- function(guid, lang, print, ...) {
 #' Print method for wdcontent
 #'
 #' @param content wdcontent object from \code{\link{wdclaimcontent}}
+#' @keywords internal
 #' @param open.ext Logical - if \code{TRUE} external sources of the claim like images or URLs are opened
 print.wdcontent <- function(content, open.ext=TRUE) {
 	cat("\n\tWikidata claim content\n\n")
 	cat(paste("GUID:", content$guid, "\n"))
-	cat(paste("Item:", content$id, "\n"))
+	cat(paste("Item:", content$item, "\n"))
 	cat(paste("Property:", content$property, "\n"))
 	cat(paste("Type:", content$type, "\n\n"))
 	
