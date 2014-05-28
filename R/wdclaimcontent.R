@@ -1,6 +1,7 @@
 
 #' Get content of a specific claim
 #'
+#' @import httr
 #' @param guid The Wikidata claim guid, as string
 #' @param lang Language abbreviation (ISO language codes), as string - default is \code{"en"}
 #' @param print Logical - if \code{TRUE} (default) the claim content is printed
@@ -14,21 +15,7 @@
 #' zapa.coa <- wdclaimcontent(guid="q144786$25DC2C5E-D59F-4C9B-A307-1DBDF3215576", 
 #'   lang="pl", print=FALSE, open.ext=FALSE)
 #' }
-wdclaimcontent <- function(guid, lang="en", print=TRUE, ...) UseMethod("wdclaimcontent")
-
-#wdclaimcontent <- function(qid, pid, lang="en", print=TRUE, ...) UseMethod("wdclaimcontent")
-
-
-#' Get content of a specific claim - default method
-#'
-#' @import httr
-#' @param guid The Wikidata claim guid, as string
-#' @param lang Language abbreviation (ISO language codes), as string
-#' @param print Logical - if \code{TRUE} the claim content is printed
-#' @param ... Arguments passed to methods
-#' @return A list containing meta information of the claim and its content
-#' @keywords internal
-wdclaimcontent.default <- function(guid, lang, print, ...) {
+wdclaimcontent <- function(guid, lang="en", print=TRUE, ...) {
 		
 	# prepare request
 	url <- paste0("http://www.wikidata.org/w/api.php?action=wbgetclaims&format=json&claim=", guid)
@@ -103,7 +90,6 @@ wdclaimcontent.default <- function(guid, lang, print, ...) {
 #' Print method for wdcontent
 #'
 #' @param content wdcontent object from \code{\link{wdclaimcontent}}
-#' @keywords internal
 #' @param open.ext Logical - if \code{TRUE} external sources of the claim like images or URLs are opened
 print.wdcontent <- function(content, open.ext=TRUE) {
 	cat("\n\tWikidata claim content\n\n")

@@ -1,6 +1,7 @@
 
 #' Get a Wikidata item
 #'
+#' @import httr
 #' @param qid The Wikidata item id, as string (including the 'Q') or integer value (without the 'Q')
 #' @param lang Language abbreviation (ISO language codes), as string - default is \code{"en"}
 #' @param print Logical - if \code{TRUE} (default) the item information are printed
@@ -12,18 +13,7 @@
 #' zapa.item <- wdgetitem(qid="q144786", lang="pl", print=FALSE)
 #' wdgetitem() # get random item
 #' }
-wdgetitem <- function(qid, lang="en", print=TRUE) UseMethod("wdgetitem")
-
-
-#' Get a Wikidata item - default method
-#'
-#' @import httr
-#' @param qid The Wikidata item id, as string (including the 'Q') or integer value (without the 'Q')
-#' @param lang Language abbreviation (ISO language codes), as string
-#' @param print Logical - if \code{TRUE} the item information are printed
-#' @return A list with basic information about the item
-#' @keywords internal
-wdgetitem.default <- function(qid, lang, print) {
+wdgetitem <- function(qid, lang="en", print=TRUE) {
 	
 	if(missing(qid)) { # get random item
 		url <- paste0("http://www.wikidata.org/wiki/Special:Statistics?uselang=en")
@@ -65,7 +55,6 @@ wdgetitem.default <- function(qid, lang, print) {
 #' Print method for wditem
 #'
 #' @param item wditem object
-#' @keywords internal
 print.wditem <- function(item) {
 	
 	cat("\n\tWikidata item\n\n")

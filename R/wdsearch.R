@@ -1,6 +1,7 @@
 
 #' Search for Wikidata items
 #'
+#' @import httr
 #' @param search A string to search for
 #' @param lang Language abbreviation (ISO language codes), as string - default is \code{"en"}
 #' @param lim Maximal number of results, as integer - default is \code{10}
@@ -12,19 +13,7 @@
 #' wdsearch("zakopane")
 #' zapa <- wdsearch(search="zakopane", lang="pl", lim=1, print=FALSE)
 #' }
-wdsearch <- function(search, lang="en", lim=10, print=TRUE) UseMethod("wdsearch")
-
-
-#' Search for Wikidata items - default method
-#'
-#' @import httr
-#' @param search A string to search for
-#' @param lang Language abbreviation (ISO language codes), as string
-#' @param lim Maximal number of results, as integer
-#' @param print Logical - if \code{TRUE} the search results are printed
-#' @return A list of search results and meta information
-#' @keywords internal
-wdsearch.default <- function(search, lang, lim, print) {
+wdsearch <- function(search, lang="en", lim=10, print=TRUE) {
 		
 	# prepare request
 	search <- paste("search", search, sep="=")
@@ -51,7 +40,6 @@ wdsearch.default <- function(search, lang, lim, print) {
 #' Print method for wdsearch
 #'
 #' @param result wdsearch object with search results
-#' @keywords internal
 print.wdsearch <- function(result) {
 	
 	cat("\n\tWikidata search\n\n")

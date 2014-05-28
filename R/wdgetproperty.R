@@ -1,6 +1,7 @@
 
 #' Get a Wikidata property
 #'
+#' @import httr
 #' @param pid The Wikidata property id, as string (including the 'P') or integer value (without the 'P')
 #' @param lang Language abbreviation (ISO language codes), as string - default is \code{"en"}
 #' @param print Logical - if \code{TRUE} (default) the property information are printed
@@ -11,18 +12,7 @@
 #' wdgetproperty(31)
 #' prop <- wdgetproperty(pid="p31", lang="pl", print=FALSE)
 #' }
-wdgetproperty <- function(pid, lang="en", print=TRUE) UseMethod("wdgetproperty")
-
-
-#' Get a Wikidata property - default method
-#'
-#' @import httr
-#' @param pid The Wikidata property id, as string (including the 'P') or integer value (without the 'P')
-#' @param lang Language abbreviation (ISO language codes), as string
-#' @param print Logical - if \code{TRUE} the property information are printed
-#' @return A vector of two: property value and property description
-#' @keywords internal
-wdgetproperty.default <- function(pid, lang, print) {
+wdgetproperty <- function(pid, lang="en", print=TRUE) {
 	
 	# https://www.wikidata.org/wiki/Property%3aP246?uselang=en
 	
@@ -58,7 +48,6 @@ wdgetproperty.default <- function(pid, lang, print) {
 #' Print method for wdproperty
 #'
 #' @param property wdproperty object
-#' @keywords internal
 print.wdproperty <- function(property) {
 	
 	cat("\n\tWikidata property\n\n")

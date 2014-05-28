@@ -1,6 +1,7 @@
 
 #' Get claims of a Wikidata item by API request
 #'
+#' @import httr
 #' @param qid The Wikidata item id, as string (including the 'Q') or integer value (without the 'Q')
 #' @param print Logical - if \code{TRUE} (default) the claims are printed
 #' @return A list with basic information about the item
@@ -11,32 +12,7 @@
 #' wdgetclaims(144786)
 #' zapa.claims <- wdgetclaims(qid="q144786", print=FALSE)
 #' }
-wdgetclaims <- function(qid, print=TRUE) UseMethod("wdgetclaims")
-
-#' Get claims of a Wikidata item
-#'
-#' @param item The Wikidata item object - from \code{\link{wdgetitem}}
-#' @param print Logical - if \code{TRUE} (default) the claims are printed
-#' @return A data frame listing all claims of the item
-#' @seealso \code{\link{wdgetitem}} for general information about the item, \code{\link{wdgetclaims}} to get claims of a wditem object by API request
-#' @export
-#' @examples
-#' \dontrun{
-#' zapa.item <- wdgetitem(qid="q144786")
-#' getclaims(zapa.item)
-#' zapa.claims <- getclaims(item=zapa.item, print=FALSE)
-#' }
-getclaims <- function(item, print=TRUE) UseMethod("getclaims")
-
-
-#' Get claims of a Wikidata item by API request
-#'
-#' @import httr
-#' @param qid The Wikidata item id, as string (including the 'Q') or integer value (without the 'Q')
-#' @param print Logical - if \code{TRUE} the claims are printed
-#' @return A list with basic information about the item
-#' @keywords internal
-wdgetclaims.default <- function(qid, print=TRUE) {
+wdgetclaims <- function(qid, print=TRUE) {
 	
 	if(is.numeric(qid)) qid <- paste0("Q", qid)
 	
@@ -59,13 +35,20 @@ wdgetclaims.default <- function(qid, print=TRUE) {
 }
 
 
-#' Get claims of a Wikidata item - default method
+#' Get claims of a Wikidata item
 #'
 #' @param item The Wikidata item object - from \code{\link{wdgetitem}}
-#' @param print Logical - if \code{TRUE} the claims are printed
+#' @param print Logical - if \code{TRUE} (default) the claims are printed
 #' @return A data frame listing all claims of the item
-#' @keywords internal
-getclaims.default <- function(item, print=TRUE) {
+#' @seealso \code{\link{wdgetitem}} for general information about the item, \code{\link{wdgetclaims}} to get claims of a wditem object by API request
+#' @export
+#' @examples
+#' \dontrun{
+#' zapa.item <- wdgetitem(qid="q144786")
+#' getclaims(zapa.item)
+#' zapa.claims <- getclaims(item=zapa.item, print=FALSE)
+#' }
+getclaims <- function(item, print=TRUE) {
 
 	if(is.null(item$entities[[1]]$claims)) warning("no claims found in item", substitute(item))
 	else {
@@ -82,7 +65,6 @@ getclaims.default <- function(item, print=TRUE) {
 #' Print method for wdclaim
 #'
 #' @param claim wdclaim object from \code{\link{wdgetclaims}} or \code{\link{getclaims}}
-#' @keywords internal
 print.wdclaims <- function(claim) {
 	
 	# get ids and names
