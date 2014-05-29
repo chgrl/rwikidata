@@ -72,7 +72,10 @@ wdclaimcontent <- function(guid, lang="en", print=TRUE, ...) {
 		if(tolower(tail(strsplit(fname, ".", fixed=TRUE)[[1]], 1))!="png") system(paste("convert", file.path(tempdir(), fname), out))
 		content <- out
 	} else if(type=="quantity") { # quantity
-		content <- claim[[1]][[1]]$mainsnak$datavalue$value
+		amount <- as.numeric(claim[[1]][[1]]$mainsnak$datavalue$value$amount)
+		unit <- claim[[1]][[1]]$mainsnak$datavalue$value$unit
+		content <- amount
+		attr(content, "unit") <- unit
 	}
 	
 	content <- list(guid=guid, item=item, property=prop, type=type, content=content)
@@ -98,8 +101,10 @@ print.wdcontent <- function(content, open.ext=TRUE) {
 	cat(paste("Property:", content$property, "\n"))
 	cat(paste("Type:", content$type, "\n\n"))
 	
-	if(content$type=="string" || content$type=="time" || content$type=="quantity") {
+	if(content$type=="string" || content$type=="time") {
 		cat(content$content, "\n")
+	else if(content$type=="quantity") {
+		cat(content$content, attr(content$content, "unit"))
 	} else if(content$type=="url") {
 		cat(content$content, "\n")
 		if(open.ext) browseURL(content$content)
