@@ -103,7 +103,7 @@ print.wdcontent <- function(content, open.ext=TRUE) {
 	
 	if(content$type=="string" || content$type=="time") {
 		cat(content$content, "\n")
-	else if(content$type=="quantity") {
+	} else if(content$type=="quantity") {
 		cat(content$content, attr(content$content, "unit"))
 	} else if(content$type=="url") {
 		cat(content$content, "\n")
@@ -111,8 +111,8 @@ print.wdcontent <- function(content, open.ext=TRUE) {
 	} else if(content$type=="wikibase-item") {
 		cat(content$content[1], "-", content$content[2], "\n")
 	} else if(content$type=="globe-coordinate") {
-		cat(content$content[1], ",", content$content[2], "\n")
-		if(open.ext && is.numeric(content$content[1]) && is.numeric(content$content[2])) browseURL(paste0("http://www.openstreetmap.org/#map=3", content$content[1], "/", content$content[2]))
+		cat(content$content[1], ",", content$content[2], "\n", sep="")
+		if(open.ext && is.numeric(content$content[1]) && is.numeric(content$content[2])) browseURL(paste("http://www.openstreetmap.org/#map=10", content$content[1], content$content[2], sep="/"))
 	} else if(content$type=="commonsMedia") {
 		cat("PNG image:", content$content, "\n")
 		if(open.ext) {
