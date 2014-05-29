@@ -6,5 +6,6 @@ http://www.wikidata.org
 
 Install from GitHub
 -------------------
-if(!require(devtools)) install.packages('devtools')
-devtools::install_github('rwikidata', 'chgrl‘)
+
+    if(!require(devtools)) install.packages('devtools')
+    devtools::install_github('rwikidata', 'chgrl‘)
