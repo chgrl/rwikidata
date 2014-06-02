@@ -3,10 +3,14 @@
 \alias{wdclaimcontent}
 \title{Get content of a specific claim}
 \usage{
-wdclaimcontent(guid, lang = "en", print = TRUE, ...)
+wdclaimcontent(qid, pid, guid, lang = "en", print = TRUE, ...)
 }
 \arguments{
-\item{guid}{The Wikidata claim guid, as string}
+\item{qid}{The Wikidata item qid, as string (including the 'Q') or integer value (without the 'Q') - required unless guid is provided}
+
+\item{pid}{The Wikidata property id, as string (including the 'P') or integer value (without the 'P') - required unless guid is provided}
+
+\item{guid}{The Wikidata claim guid, as string - required unless qid and pid are provided}
 
 \item{lang}{Language abbreviation (ISO language codes), as string - default is \code{"en"}}
 
@@ -22,12 +26,16 @@ Get content of a specific claim
 }
 \examples{
 \dontrun{
-wdclaimcontent("q206904$26C11CAB-2FEE-4A03-9774-9B70777616B3")  # wikidata item
-wdclaimcontent("q52$61ba10af-455f-021c-19d5-d1a0df4d65f5")  # date/time
-wdclaimcontent("q7186$5675dddd-438d-bd8d-3355-8117747e182d")  # string
-wdclaimcontent("Q206904$920876CE-1C0E-40ED-BB3C-ACB2AC15870C")  # url
-wdclaimcontent("q2280$91220430-4b56-8c53-d75d-ba85ce8a2629")  # geocoordinates
-wdclaimcontent("q144786$25DC2C5E-D59F-4C9B-A307-1DBDF3215576")  # commons image
+wdclaimcontent(qid=144786, pid=17)
+wdclaimcontent(guid="q144786$258996D0-319A-4A14-971A-6F3326C05ADD")  # same same
+
+# different content types
+wdclaimcontent(guid="q206904$26C11CAB-2FEE-4A03-9774-9B70777616B3")  # wikidata item
+wdclaimcontent(guid="q52$61ba10af-455f-021c-19d5-d1a0df4d65f5")  # date/time
+wdclaimcontent(guid="q7186$5675dddd-438d-bd8d-3355-8117747e182d")  # string
+wdclaimcontent(guid="Q206904$920876CE-1C0E-40ED-BB3C-ACB2AC15870C")  # url
+wdclaimcontent(guid="q2280$91220430-4b56-8c53-d75d-ba85ce8a2629")  # geocoordinates
+wdclaimcontent(guid="q144786$25DC2C5E-D59F-4C9B-A307-1DBDF3215576")  # commons image
 zapa.coa <- wdclaimcontent(guid="q144786$25DC2C5E-D59F-4C9B-A307-1DBDF3215576",
   lang="pl", print=FALSE, open.ext=FALSE)
 }

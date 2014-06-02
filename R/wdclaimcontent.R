@@ -2,7 +2,9 @@
 #' Get content of a specific claim
 #'
 #' @import httr
-#' @param guid The Wikidata claim guid, as string
+#' @param qid The Wikidata item qid, as string (including the 'Q') or integer value (without the 'Q') - required unless guid is provided
+#' @param pid The Wikidata property id, as string (including the 'P') or integer value (without the 'P') - required unless guid is provided
+#' @param guid The Wikidata claim guid, as string - required unless qid and pid are provided
 #' @param lang Language abbreviation (ISO language codes), as string - default is \code{"en"}
 #' @param print Logical - if \code{TRUE} (default) the claim content is printed
 #' @param ... Arguments passed to methods, e.g. \code{open.ext} - if \code{TRUE} (default) external sources of the claim like images or URLs are opened
@@ -11,19 +13,44 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' wdclaimcontent("q206904$26C11CAB-2FEE-4A03-9774-9B70777616B3")  # wikidata item
-#' wdclaimcontent("q52$61ba10af-455f-021c-19d5-d1a0df4d65f5")  # date/time
-#' wdclaimcontent("q7186$5675dddd-438d-bd8d-3355-8117747e182d")  # string
-#' wdclaimcontent("Q206904$920876CE-1C0E-40ED-BB3C-ACB2AC15870C")  # url
-#' wdclaimcontent("q2280$91220430-4b56-8c53-d75d-ba85ce8a2629")  # geocoordinates
-#' wdclaimcontent("q144786$25DC2C5E-D59F-4C9B-A307-1DBDF3215576")  # commons image
+#' wdclaimcontent(qid=144786, pid=17)
+#' wdclaimcontent(guid="q144786$258996D0-319A-4A14-971A-6F3326C05ADD")  # same same
+#'
+#' # different content types
+#' wdclaimcontent(guid="q206904$26C11CAB-2FEE-4A03-9774-9B70777616B3")  # wikidata item
+#' wdclaimcontent(guid="q52$61ba10af-455f-021c-19d5-d1a0df4d65f5")  # date/time
+#' wdclaimcontent(guid="q7186$5675dddd-438d-bd8d-3355-8117747e182d")  # string
+#' wdclaimcontent(guid="Q206904$920876CE-1C0E-40ED-BB3C-ACB2AC15870C")  # url
+#' wdclaimcontent(guid="q2280$91220430-4b56-8c53-d75d-ba85ce8a2629")  # geocoordinates
+#' wdclaimcontent(guid="q144786$25DC2C5E-D59F-4C9B-A307-1DBDF3215576")  # commons image
 #' zapa.coa <- wdclaimcontent(guid="q144786$25DC2C5E-D59F-4C9B-A307-1DBDF3215576", 
 #'   lang="pl", print=FALSE, open.ext=FALSE)
 #' }
-wdclaimcontent <- function(guid, lang="en", print=TRUE, ...) {
+wdclaimcontent <- function(qid, pid, guid, lang="en", print=TRUE, ...) {
 		
 	# prepare request
-	url <- paste0("http://www.wikidata.org/w/api.php?action=wbgetclaims&format=json&claim=", guid)
+	if(!missing(qid) && !missing(pid) && missing(guid)) {
+		if(is.numeric(qid)) qid <- paste0("Q", qid)
+		if(is.numeric(pid)) pid <- paste0("P", pid)
+		url <- paste0("http://www.wikidata.org/w/api.php?action=wbgetclaims&format=json&entity=", qid, "&property=", pid)
+	} else if(missing(qid) && missing(pid) && !missing(guid)) url <- paste0("http://www.wikidata.org/w/api.php?action=wbgetclaims&format=json&claim=", guid)
+	else stop("either qid and pid or guid only required")
+	
+	# get content
+	wdcontent <- wdclaimcontent.int(url, lang)
+	
+	if(print) print(wdcontent, ...)
+	invisible(wdcontent)
+}
+
+
+#' Internal method to execute API request and process the content
+#'
+#' @param url API request URL
+#' @return A list of guid, item, property, type and content
+#' @seealso \code{\link{wdclaimcontent}}
+#' @keywords internal
+wdclaimcontent.int <- function(url, lang) {
 	
 	# execute request
 	raw <- GET(url, config=add_headers("User-agent"="rwikidata"))
@@ -34,6 +61,7 @@ wdclaimcontent <- function(guid, lang="en", print=TRUE, ...) {
 	claim <- claim$claims
 	
 	# get info
+	guid <- claim[[1]][[1]]$id	# if qid and pid given - only first claim, there might be more than one
 	item <- wdgetitem(strsplit(claim[[1]][[1]]$id, "$", fixed=TRUE)[[1]][1], lang=lang, print=FALSE)$entities[[1]]$labels[[1]]$value
 	prop <- wdgetproperty(claim[[1]][[1]]$mainsnak$property, lang=lang, print=FALSE)[1]
 	type <- claim[[1]][[1]]$mainsnak$datatype
@@ -85,14 +113,8 @@ wdclaimcontent <- function(guid, lang="en", print=TRUE, ...) {
 	
 	content <- list(guid=guid, item=item, property=prop, type=type, content=content)
 	class(content) <- "wdcontent"
-	if(print) print(content, ...)
-	invisible(content)
+	return(content)
 }
-
-
-#wdclaimcontent.idprop <- function(qid, pid, print=TRUE) {
-#	
-#}
 
 
 #' Print method for wdcontent
