@@ -37,7 +37,7 @@ wdclaimcontent(guid="Q206904$920876CE-1C0E-40ED-BB3C-ACB2AC15870C")  # url
 wdclaimcontent(guid="q2280$91220430-4b56-8c53-d75d-ba85ce8a2629")  # geocoordinates
 wdclaimcontent(guid="q144786$25DC2C5E-D59F-4C9B-A307-1DBDF3215576")  # commons image
 zapa.coa <- wdclaimcontent(guid="q144786$25DC2C5E-D59F-4C9B-A307-1DBDF3215576",
-  lang="pl", print=FALSE, open.ext=FALSE)
+  lang="pl", print=TRUE, open.ext=FALSE)
 }
 }
 \seealso{
