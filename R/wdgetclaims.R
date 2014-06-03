@@ -96,7 +96,13 @@ print.wdclaims <- function(claim) {
 	claim.tbl <- as.data.frame(claim.tbl)
 	names(claim.tbl) <- c("Property", "Claim", "GUID")
 	
+	# get item info
+	item <- NULL
+	item <- wdgetitem(strsplit(toString(claim.tbl$GUID[1]), "$", fixed=TRUE)[[1]][1], print=FALSE)$entities[[1]]$labels[[1]]$value
+	if(is.null(item)) item <- ""
+	else item <- paste("-", item)
+	
 	# print
-	cat("\n\tWikidata claims\n\n")
+	cat("\n\tWikidata claims ", item, "\n\n")
 	print(claim.tbl, quote=FALSE, right=FALSE, row.names=FALSE)
 }
