@@ -91,10 +91,11 @@ print.wdclaims <- function(claim) {
 		claim.tbl <- rbind(claim.tbl, c(claim.id[i], claim.name[i], claim.guid[[i]][1]))
 		if(length(claim.guid[[i]])>1) for(j in 2:length(claim.guid[[i]])) claim.tbl <- rbind(claim.tbl, c("", "", claim.guid[[i]][j]))
 	}
+	if(is.null(nrow(claim.tbl))) claim.tbl <- t(claim.tbl)	# only one claim
 	row.names(claim.tbl) <- c(1:nrow(claim.tbl))
 	claim.tbl <- as.data.frame(claim.tbl)
 	names(claim.tbl) <- c("Property", "Claim", "GUID")
-		
+	
 	# print
 	cat("\n\tWikidata claims\n\n")
 	print(claim.tbl, quote=FALSE, right=FALSE, row.names=FALSE)
