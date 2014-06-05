@@ -7,6 +7,8 @@ wdclaimcontent.int(url, lang)
 }
 \arguments{
 \item{url}{API request URL}
+
+\item{lang}{Language abbreviation (ISO language codes), as string}
 }
 \value{
 A list of guid, item, property, type and content

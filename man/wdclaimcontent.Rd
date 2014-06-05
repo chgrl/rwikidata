@@ -29,6 +29,9 @@ Get content of a specific claim
 wdclaimcontent(qid=144786, pid=17)
 wdclaimcontent(guid="q144786$258996D0-319A-4A14-971A-6F3326C05ADD")  # same same
 
+# with qualifiers
+wdclaimcontent(183, 36)
+
 # different content types
 wdclaimcontent(guid="q206904$26C11CAB-2FEE-4A03-9774-9B70777616B3")  # wikidata item
 wdclaimcontent(guid="q52$61ba10af-455f-021c-19d5-d1a0df4d65f5")  # date/time
