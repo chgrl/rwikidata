@@ -121,13 +121,16 @@ wdclaimcontent.int <- function(url, lang) {
 		# qualifiers
 		qualifiers <- list()
 		if(!is.null(claim[[1]][[cl]]$qualifiers)) {
-			qualifiers <- claim[[1]][[cl]]$qualifiers
-			n.qual <- length(qualifiers)
+			qual <- claim[[1]][[cl]]$qualifiers
+			n.qual <- length(qual)
 			for(i in 1:n.qual) {
 				### todo: qualifier might be a list - qualifiers[[i]][[x]]
-				qual.prop <- wdgetproperty(qualifiers[[i]][[1]]$property, lang=lang, print=FALSE)[1]
-				qual.type <- qualifiers[[i]][[1]]$datatype
-				if(!is.null(qualifiers[[i]][[1]]$datavalue)) qualifiers[[i]] <- getqualifier(qualifiers[[i]][[1]]$datavalue, qual.prop, qual.type, lang)
+				qual.prop <- wdgetproperty(qual[[i]][[1]]$property, lang=lang, print=FALSE)[1]
+				qual.type <- qual[[i]][[1]]$datatype
+				if(!is.null(qual[[i]][[1]]$datavalue)) {
+					qualifiers[[i]] <- getqualifier(qual[[i]][[1]]$datavalue, qual.type, lang)
+					names(qualifiers[[i]]) <- gsub(" ", "_", qual.prop, fixed=TRUE)
+				}
 			}
 		}
 		
@@ -153,7 +156,7 @@ wdclaimcontent.int <- function(url, lang) {
 #' @return Qualifier value - object depends on qualifier type
 #' @seealso \code{\link{wdclaimcontent.int}}
 #' @keywords internal
-getqualifier <- function(qualifier, prop, type, lang) {
+getqualifier <- function(qualifier, type, lang) {
 	if(type=="string") {
 		value <- qualifier$value
 		attr(value, "type") <- "string"
@@ -178,7 +181,6 @@ getqualifier <- function(qualifier, prop, type, lang) {
 		attr(value, "type") <- "globe-coordinate"
 	} else warning("qualifier not recognized", call.=FALSE)
 	
-	attr(value, "property") <- prop
 	return(value)
 }
 
@@ -225,7 +227,9 @@ print.wdcontent <- function(content, open.ext=TRUE) {
 		}
 		
 		# qualifiers
-		# ...
+		if(!is.null(content$qualifiers)) {
+			for(i in 1:length(content$qualifiers)) cat(paste0(gsub("_", " ", names(content$qualifiers[[i]]), fixed=TRUE), ":"), toString(content$qualifiers[[i]]), "\n")
+		}
 	} else { # multiple claim content
 		cat(paste("Item:", content$item, "\n"))
 		cat(paste("Property:", content$property, "\n"))
@@ -261,9 +265,9 @@ print.wdcontent <- function(content, open.ext=TRUE) {
 					rasterImage(img, 1, 1, dim.img[2], dim.img[1])
 				}
 			}
+			
+			# qualifiers
+			# ...
 		}
-		
-		# qualifiers
-		# ...
 	}					
 }
