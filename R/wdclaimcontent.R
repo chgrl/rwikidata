@@ -267,7 +267,9 @@ print.wdcontent <- function(content, open.ext=TRUE) {
 			}
 			
 			# qualifiers
-			# ...
+			if(!is.null(content$claims[[i]]$qualifiers)) {
+				for(n in 1:length(content$claims[[i]]$qualifiers)) cat(paste0(gsub("_", " ", names(content$claims[[i]]$qualifiers[[n]]), fixed=TRUE), ":"), toString(content$claims[[i]]$qualifiers[[n]]), "\n")
+			}
 		}
 	}					
 }
