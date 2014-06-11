@@ -3,7 +3,7 @@
 \alias{getqualifier}
 \title{Internal method to get and prepare the qualifiers}
 \usage{
-getqualifier(qualifier, prop, type, lang)
+getqualifier(qualifier, type, lang)
 }
 \arguments{
 \item{qualifier}{Raw qualifier object}
