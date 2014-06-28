@@ -1,5 +1,9 @@
-rwikidata
+<img src="rwikidata_logo.png" alt="rwikidata" />
+
+R interface to wikidata.org
+
 =========
+
 ![](https://travis-ci.org/chgrl/rwikidata.png?branch=master)
 
 An R package to request data from (and some day probably edit data in) Wikidata.org, the free knowledgebase.
