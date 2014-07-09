@@ -4,7 +4,7 @@ R interface to wikidata.org
 
 =========
 
-![](https://travis-ci.org/chgrl/rwikidata.png?branch=master)
+[![Build Status](https://api.travis-ci.org/chgrl/rwikidata.png)](https://travis-ci.org/chgrl/rwikidata)
 
 An R package to request data from (and some day probably edit data in) Wikidata.org, the free knowledgebase.
 
