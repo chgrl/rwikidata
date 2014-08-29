@@ -38,23 +38,26 @@ wdgetproperty <- function(pid, lang="en", print=TRUE) {
 	
 	if(any(prop.val.desc=="")) warning("parsing error")
 	else {
-		class(prop.val.desc) <- "wdproperty"
+		class(prop.val.desc) <- "wdgetproperty"
 		if(print) print(prop.val.desc)
 		invisible(prop.val.desc)
 	}
 }
 
 
-#' Print method for wdproperty
+#' Print method for wdgetproperty
 #'
-#' @param property wdproperty object
-print.wdproperty <- function(property) {
+#' @param x wdgetproperty object
+#' @param \dots Arguments to be passed to methods
+#' @method print wdgetproperty
+#' @S3method print wdgetproperty
+print.wdgetproperty <- function(x, ...) {
 	
 	cat("\n\tWikidata property\n\n")
 	
 	# property
-	cat("Property:", property[1], "\n")
+	cat("Property:", x[1], "\n")
 	
 	# description
-	cat("Description:", property[2], "\n")
+	cat("Description:", x[2], "\n")
 }

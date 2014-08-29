@@ -144,7 +144,7 @@ wdclaimcontent.int <- function(url, lang) {
 		}
 	}
 	
-	class(wdcontent) <- "wdcontent"
+	class(wdcontent) <- "wdclaimcontent"
 	return(wdcontent)
 }
 
@@ -185,39 +185,42 @@ getqualifier <- function(qualifier, type, lang) {
 }
 
 
-#' Print method for wdcontent
+#' Print method for wdclaimcontent
 #'
-#' @param content wdcontent object from \code{\link{wdclaimcontent}}
+#' @param x wdclaimcontent object from \code{\link{wdclaimcontent}}
 #' @param open.ext Logical - if \code{TRUE} external sources of the claim like images or URLs are opened
-print.wdcontent <- function(content, open.ext=TRUE) {
+#' @param \dots Arguments to be passed to methods
+#' @method print wdclaimcontent
+#' @S3method print wdclaimcontent
+print.wdclaimcontent <- function(x, open.ext=TRUE, ...) {
 	cat("\n\tWikidata claim content\n\n")
 	
-	if(is.null(content$claims)) { # single claim content
-		cat(paste("GUID:", content$guid, "\n"))
-		cat(paste("Item:", content$item, "\n"))
-		cat(paste("Property:", content$property, "\n"))
-		cat(paste("Type:", content$type, "\n\n"))
+	if(is.null(x$claims)) { # single claim content
+		cat(paste("GUID:", x$guid, "\n"))
+		cat(paste("Item:", x$item, "\n"))
+		cat(paste("Property:", x$property, "\n"))
+		cat(paste("Type:", x$type, "\n\n"))
 		
 		# content
-		if(content$type=="string") {
-			cat(content$content, "\n")
-		} else if(content$type=="time") {
-			cat(as.character(content$content), "\n")
-		} else if(content$type=="quantity") {
-			cat(content$content, attr(content$content, "unit"))
-		} else if(content$type=="url") {
-			cat(content$content, "\n")
-			if(open.ext) browseURL(content$content)
-		} else if(content$type=="wikibase-item") {
-			cat(content$content[1], "-", content$content[2], "\n")
-		} else if(content$type=="globe-coordinate") {
-			cat(content$content[1], ",", content$content[2], "\n", sep="")
-			if(open.ext && is.numeric(content$content[1]) && is.numeric(content$content[2])) browseURL(paste("http://www.openstreetmap.org/#map=10", content$content[1], content$content[2], sep="/"))
-		} else if(content$type=="commonsMedia") {
-			cat("PNG image:", content$content, "\n")
+		if(x$type=="string") {
+			cat(x$content, "\n")
+		} else if(x$type=="time") {
+			cat(as.character(x$content), "\n")
+		} else if(x$type=="quantity") {
+			cat(x$content, attr(x$content, "unit"))
+		} else if(x$type=="url") {
+			cat(x$content, "\n")
+			if(open.ext) browseURL(x$content)
+		} else if(x$type=="wikibase-item") {
+			cat(x$content[1], "-", x$content[2], "\n")
+		} else if(x$type=="globe-coordinate") {
+			cat(x$content[1], ",", x$content[2], "\n", sep="")
+			if(open.ext && is.numeric(x$content[1]) && is.numeric(x$content[2])) browseURL(paste("http://www.openstreetmap.org/#map=10", x$content[1], content$content[2], sep="/"))
+		} else if(x$type=="commonsMedia") {
+			cat("PNG image:", x$content, "\n")
 			if(open.ext) {
 				stopifnot(require(png))
-				img <- readPNG(content$content)
+				img <- readPNG(x$content)
 				dim.img <- dim(img)
 				dev.new(width=5*dim.img[2]/dim.img[1], height=5)
 				par(mar=c(0,0,0,0))
@@ -227,37 +230,37 @@ print.wdcontent <- function(content, open.ext=TRUE) {
 		}
 		
 		# qualifiers
-		if(!is.null(content$qualifiers)) {
-			for(i in 1:length(content$qualifiers)) cat(paste0(gsub("_", " ", names(content$qualifiers[[i]]), fixed=TRUE), ":"), toString(content$qualifiers[[i]]), "\n")
+		if(!is.null(x$qualifiers)) {
+			for(i in 1:length(x$qualifiers)) cat(paste0(gsub("_", " ", names(x$qualifiers[[i]]), fixed=TRUE), ":"), toString(x$qualifiers[[i]]), "\n")
 		}
 	} else { # multiple claim content
-		cat(paste("Item:", content$item, "\n"))
-		cat(paste("Property:", content$property, "\n"))
+		cat(paste("Item:", x$item, "\n"))
+		cat(paste("Property:", x$property, "\n"))
 		
 		# content
-		for(i in 1:length(content$claims)) {
-			cat(paste("\n", i, "\nGUID:", content$claims[[i]]$guid, "\n"))
-			cat(paste("Type:", content$claims[[i]]$type, "\n"))
+		for(i in 1:length(x$claims)) {
+			cat(paste("\n", i, "\nGUID:", x$claims[[i]]$guid, "\n"))
+			cat(paste("Type:", x$claims[[i]]$type, "\n"))
 			
-			if(content$claims[[i]]$type=="string") {
-				cat(content$claims[[i]]$content, "\n")
-			} else if(content$claims[[i]]$type=="time") {
-				cat(as.character(content$claims[[i]]$content), "\n")
-			} else if(content$claims[[i]]$type=="quantity") {
-				cat(content$claims[[i]]$content, attr(content$claims[[i]]$content, "unit"))
-			} else if(content$claims[[i]]$type=="url") {
-				cat(content$claims[[i]]$content, "\n")
-				if(open.ext) browseURL(content$claims[[i]]$content)
-			} else if(content$claims[[i]]$type=="wikibase-item") {
-				cat(content$claims[[i]]$content[1], "-", content$claims[[i]]$content[2], "\n")
-			} else if(content$claims[[i]]$type=="globe-coordinate") {
-				cat(content$claims[[i]]$content[1], ",", content$claims[[i]]$content[2], "\n", sep="")
-				if(open.ext && is.numeric(content$claims[[i]]$content[1]) && is.numeric(content$claims[[i]]$content[2])) browseURL(paste("http://www.openstreetmap.org/#map=10", content$claims[[i]]$content[1], content$claims[[i]]$content[2], sep="/"))
-			} else if(content$claims[[i]]$type=="commonsMedia") {
-				cat("PNG image:", content$claims[[i]]$content, "\n")
+			if(x$claims[[i]]$type=="string") {
+				cat(x$claims[[i]]$content, "\n")
+			} else if(x$claims[[i]]$type=="time") {
+				cat(as.character(x$claims[[i]]$content), "\n")
+			} else if(x$claims[[i]]$type=="quantity") {
+				cat(x$claims[[i]]$content, attr(x$claims[[i]]$content, "unit"))
+			} else if(x$claims[[i]]$type=="url") {
+				cat(x$claims[[i]]$content, "\n")
+				if(open.ext) browseURL(x$claims[[i]]$content)
+			} else if(x$claims[[i]]$type=="wikibase-item") {
+				cat(x$claims[[i]]$content[1], "-", x$claims[[i]]$content[2], "\n")
+			} else if(x$claims[[i]]$type=="globe-coordinate") {
+				cat(x$claims[[i]]$content[1], ",", x$claims[[i]]$content[2], "\n", sep="")
+				if(open.ext && is.numeric(x$claims[[i]]$content[1]) && is.numeric(x$claims[[i]]$content[2])) browseURL(paste("http://www.openstreetmap.org/#map=10", x$claims[[i]]$content[1], x$claims[[i]]$content[2], sep="/"))
+			} else if(x$claims[[i]]$type=="commonsMedia") {
+				cat("PNG image:", x$claims[[i]]$content, "\n")
 				if(open.ext) {
 					stopifnot(require(png))
-					img <- readPNG(content$claims[[i]]$content)
+					img <- readPNG(x$claims[[i]]$content)
 					dim.img <- dim(img)
 					dev.new(width=5*dim.img[2]/dim.img[1], height=5)
 					par(mar=c(0,0,0,0))
@@ -267,8 +270,8 @@ print.wdcontent <- function(content, open.ext=TRUE) {
 			}
 			
 			# qualifiers
-			if(!is.null(content$claims[[i]]$qualifiers)) {
-				for(n in 1:length(content$claims[[i]]$qualifiers)) cat(paste0(gsub("_", " ", names(content$claims[[i]]$qualifiers[[n]]), fixed=TRUE), ":"), toString(content$claims[[i]]$qualifiers[[n]]), "\n")
+			if(!is.null(x$claims[[i]]$qualifiers)) {
+				for(n in 1:length(x$claims[[i]]$qualifiers)) cat(paste0(gsub("_", " ", names(x$claims[[i]]$qualifiers[[n]]), fixed=TRUE), ":"), toString(x$claims[[i]]$qualifiers[[n]]), "\n")
 			}
 		}
 	}					

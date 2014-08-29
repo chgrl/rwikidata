@@ -45,33 +45,36 @@ wdgetitem <- function(qid, lang="en", print=TRUE) {
 	
 	if(is.null(item$success)) warning("failed\n", "code: ", item$error[[1]], " - ", item$error[[2]]) 
 	else {
-		class(item) <- "wditem"
+		class(item) <- "wdgetitem"
 		if(print) print(item)
 		invisible(item)
 	}
 }
 
 
-#' Print method for wditem
+#' Print method for wdgetitem
 #'
-#' @param item wditem object
-print.wditem <- function(item) {
+#' @param x wdgetitem object
+#' @param \dots Arguments to be passed to methods
+#' @method print wdgetitem
+#' @S3method print wdgetitem
+print.wdgetitem <- function(x, ...) {
 	
 	cat("\n\tWikidata item\n\n")
 	
 	# label
-	cat("Label:", item$entities[[1]]$labels[[1]]$value, "\n")
+	cat("Label:", x$entities[[1]]$labels[[1]]$value, "\n")
 	
 	# aliases
-	num.alias <- length(item$entities[[1]]$aliases[[1]])
+	num.alias <- length(x$entities[[1]]$aliases[[1]])
 	if(num.alias>0) {
-		al <- unlist(item$entities[[1]]$aliases[[1]])
+		al <- unlist(x$entities[[1]]$aliases[[1]])
 		cat("Aliases:\t", paste(al[names(al)=="value"], collapse=", "), "\n")
 	}
 	
 	# description
-	cat("Description:", item$entities[[1]]$descriptions[[1]]$value, "\n")
+	cat("Description:", x$entities[[1]]$descriptions[[1]]$value, "\n")
 	
 	# num claims
-	cat("Claims:\t\t", length(item$entities[[1]]$claims), "\n")
+	cat("Claims:\t\t", length(x$entities[[1]]$claims), "\n")
 }

@@ -3,10 +3,12 @@
 \alias{print.wdsearch}
 \title{Print method for wdsearch}
 \usage{
-\method{print}{wdsearch}(result)
+\method{print}{wdsearch}(x, ...)
 }
 \arguments{
-\item{result}{wdsearch object with search results}
+\item{x}{wdsearch object with search results}
+
+\item{\dots}{Arguments to be passed to methods}
 }
 \description{
 Print method for wdsearch

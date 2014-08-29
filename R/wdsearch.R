@@ -39,26 +39,29 @@ wdsearch <- function(search, lang="en", lim=10, print=TRUE) {
 
 #' Print method for wdsearch
 #'
-#' @param result wdsearch object with search results
-print.wdsearch <- function(result) {
+#' @param x wdsearch object with search results
+#' @param \dots Arguments to be passed to methods
+#' @method print wdsearch
+#' @S3method print wdsearch
+print.wdsearch <- function(x, ...) {
 	
 	cat("\n\tWikidata search\n\n")
 	
 	# seach info
-	cat("Search term:\t\t", result$searchinfo$search, "\n")
+	cat("Search term:\t\t", x$searchinfo$search, "\n")
 	
 	# number of results
-	num.results <- length(result$search)
+	num.results <- length(x$search)
 	cat("Number of results:\t", num.results, "\n\n")
 		
 	# results
 	if(num.results>0) {
 		cat("Results:\n")
 		for(i in 1:num.results) {
-			label <- result$search[[i]]$label
-			id <- result$search[[i]]$id
-			if(is.null(result$search[[i]]$description)) desc <- "\n"
-			else desc <- paste("-", result$search[[i]]$description, "\n")
+			label <- x$search[[i]]$label
+			id <- x$search[[i]]$id
+			if(is.null(x$search[[i]]$description)) desc <- "\n"
+			else desc <- paste("-", x$search[[i]]$description, "\n")
 			cat(i, "\t", label, paste0("(", id, ")"), desc)
 		}
 	}

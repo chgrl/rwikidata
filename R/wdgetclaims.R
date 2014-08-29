@@ -28,7 +28,7 @@ wdgetclaims <- function(qid, print=TRUE) {
 	if(length(claim$claims)==0) warning("no claims found")
 	else {
 		claim <- claim$claims
-		class(claim) <- "wdclaims"
+		class(claim) <- "wdgetclaims"
 		if(print) print(claim)
 		invisible(claim)
 	}
@@ -55,30 +55,33 @@ getclaims <- function(item, print=TRUE) {
 		# get claim
 		wdclaim <- item$entities[[1]]$claims
 		
-		class(wdclaim) <- "wdclaims"
+		class(wdclaim) <- "wdgetclaims"
 		if(print) print(wdclaim)
 		invisible(wdclaim)
 	}
 }
 
 
-#' Print method for wdclaim
+#' Print method for wdgetclaims
 #'
-#' @param claim wdclaim object from \code{\link{wdgetclaims}} or \code{\link{getclaims}}
-print.wdclaims <- function(claim) {
+#' @param x wdgetclaims object from \code{\link{wdgetclaims}} or \code{\link{getclaims}}
+#' @param \dots Arguments to be passed to methods
+#' @method print wdgetclaims
+#' @S3method print wdgetclaims
+print.wdgetclaims <- function(x, ...) {
 	
 	# get ids and names
-	claim.num <- length(claim)
-	claim.id <- names(claim)
+	claim.num <- length(x)
+	claim.id <- names(x)
 	claim.name <- NULL
-	if(claim.num>0) for(i in 1:claim.num) claim.name <- append(claim.name, wdgetproperty(claim.id[i], print=FALSE)[1])
+	if(claim.num>0) for(i in 1:claim.num) claim.name <- append(claim.name, wdgetproperty(x[i], print=FALSE)[1])
 	else stop("no claims found")
 	claim.name[nchar(claim.name)>25] <- paste(substr(claim.name[nchar(claim.name)>25], 1, 25), "...")
 	
 	# get guids
 	claim.guid <- list()
 	if(claim.num>0) for(i in 1:claim.num) {
-		claim.set <- claim[[i]]
+		claim.set <- x[[i]]
 		guid <- NULL
 		for(j in 1:length(claim.set)) guid <- append(guid, claim.set[[j]]$id)
 		claim.guid[[i]] <- guid
