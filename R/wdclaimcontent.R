@@ -219,7 +219,7 @@ print.wdclaimcontent <- function(x, open.ext=TRUE, ...) {
 		} else if(x$type=="commonsMedia") {
 			cat("PNG image:", x$content, "\n")
 			if(open.ext) {
-				stopifnot(require(png))
+				stopifnot(requireNamespace("png", quietly=TRUE))
 				img <- readPNG(x$content)
 				dim.img <- dim(img)
 				dev.new(width=5*dim.img[2]/dim.img[1], height=5)
