@@ -22,7 +22,7 @@ wdgetproperty <- function(pid, lang="en", print=TRUE) {
 	url <- paste0("https://www.wikidata.org/wiki/Property%3a", pid, "?uselang=", lang)
 	
 	# execute request
-	raw <- GET(url, config=add_headers("User-agent"="rwikidata"))
+	raw <- httr::GET(url, config=add_headers("User-agent"="rwikidata"))
 	if(raw$status_code!=200) stop("property not found")
 	
 	# parse

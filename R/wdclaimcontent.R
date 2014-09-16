@@ -57,7 +57,7 @@ wdclaimcontent <- function(qid, pid, guid, lang="en", print=TRUE, ...) {
 wdclaimcontent.int <- function(url, lang) {
 	
 	# execute request
-	raw <- GET(url, config=add_headers("User-agent"="rwikidata"))
+	raw <- httr::GET(url, config=add_headers("User-agent"="rwikidata"))
 		
 	# parse
 	claim <- httr::content(raw, as="parsed")
@@ -220,7 +220,7 @@ print.wdclaimcontent <- function(x, open.ext=TRUE, ...) {
 			cat("PNG image:", x$content, "\n")
 			if(open.ext) {
 				stopifnot(requireNamespace("png", quietly=TRUE))
-				img <- readPNG(x$content)
+				img <- png::readPNG(x$content)
 				dim.img <- dim(img)
 				dev.new(width=5*dim.img[2]/dim.img[1], height=5)
 				par(mar=c(0,0,0,0))
@@ -259,8 +259,8 @@ print.wdclaimcontent <- function(x, open.ext=TRUE, ...) {
 			} else if(x$claims[[i]]$type=="commonsMedia") {
 				cat("PNG image:", x$claims[[i]]$content, "\n")
 				if(open.ext) {
-					stopifnot(require(png))
-					img <- readPNG(x$claims[[i]]$content)
+					stopifnot(requireNamespace("png", quietly=TRUE))
+					img <- png::readPNG(x$claims[[i]]$content)
 					dim.img <- dim(img)
 					dev.new(width=5*dim.img[2]/dim.img[1], height=5)
 					par(mar=c(0,0,0,0))

@@ -17,7 +17,7 @@ wdgetitem <- function(qid, lang="en", print=TRUE) {
 	
 	if(missing(qid)) { # get random item
 		url <- paste0("http://www.wikidata.org/wiki/Special:Statistics?uselang=en")
-		raw <- GET(url, config=add_headers("User-agent"="rwikidata"))
+		raw <- httr::GET(url, config=add_headers("User-agent"="rwikidata"))
 		if(raw$status_code!=200) stop("error loading wikidata statistics")
 		stat <- httr::content(raw, as="text")
 		stat.list <- strsplit(stat, "\n")[[1]]
@@ -38,7 +38,7 @@ wdgetitem <- function(qid, lang="en", print=TRUE) {
 	url <- paste0("http://www.wikidata.org/w/api.php?action=wbgetentities&", qid)
 	
 	# execute request
-	raw <- GET(url, config=add_headers("User-agent"="rwikidata"))
+	raw <- httr::GET(url, config=add_headers("User-agent"="rwikidata"))
 	
 	# parse
 	item <- httr::content(raw, as="parsed")

@@ -20,7 +20,7 @@ wdgetclaims <- function(qid, print=TRUE) {
 	url <- paste0("http://www.wikidata.org/w/api.php?action=wbgetclaims&format=json&entity=", qid)
 	
 	# execute request
-	raw <- GET(url, config=add_headers("User-agent"="rwikidata"))
+	raw <- httr::GET(url, config=add_headers("User-agent"="rwikidata"))
 		
 	# parse
 	claim <- httr::content(raw, as="parsed")

@@ -23,7 +23,7 @@ wdsearch <- function(search, lang="en", lim=10, print=TRUE) {
 	url <- paste0("http://www.wikidata.org/w/api.php?action=wbsearchentities&", query)
 	
 	# execute request
-	raw <- GET(url, config=add_headers("User-agent"="rwikidata"))
+	raw <- httr::GET(url, config=add_headers("User-agent"="rwikidata"))
 	
 	# parse
 	result <- httr::content(raw, as="parsed")
