@@ -1,7 +1,6 @@
 
 #' Get a Wikidata item
 #'
-#' @import httr
 #' @param qid The Wikidata item id, as string (including the 'Q') or integer value (without the 'Q')
 #' @param lang Language abbreviation (ISO language codes), as string - default is \code{"en"}
 #' @param print Logical - if \code{TRUE} (default) the item information are printed
@@ -16,10 +15,7 @@
 wdgetitem <- function(qid, lang="en", print=TRUE) {
 	
 	if(missing(qid)) { # get random item
-		url <- paste0("http://www.wikidata.org/wiki/Special:Statistics?uselang=en")
-		raw <- httr::GET(url, config=add_headers("User-agent"="rwikidata"))
-		if(raw$status_code!=200) stop("error loading wikidata statistics")
-		stat <- httr::content(raw, as="text")
+    stat <- query("http://www.wikidata.org/wiki/Special:Statistics?uselang=en","text")
 		stat.list <- strsplit(stat, "\n")[[1]]
 		stat.line <- stat.list[grep("Content pages", stat.list)]
 		stat.line <- sub(".*Content pages</a></td><td class=\"mw-statistics-numbers\">", "", stat.line)
@@ -38,11 +34,7 @@ wdgetitem <- function(qid, lang="en", print=TRUE) {
 	url <- paste0("http://www.wikidata.org/w/api.php?action=wbgetentities&", qid)
 	
 	# execute request
-	raw <- httr::GET(url, config=add_headers("User-agent"="rwikidata"))
-	
-	# parse
-	item <- httr::content(raw, as="parsed")
-	
+  item <- query(url, "parsed")
 	if(is.null(item$success)) warning("failed\n", "code: ", item$error[[1]], " - ", item$error[[2]]) 
 	else {
 		class(item) <- "wdgetitem"
