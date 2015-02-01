@@ -1,7 +1,6 @@
 
 #' Get claims of a Wikidata item by API request
 #'
-#' @import httr
 #' @param qid The Wikidata item id, as string (including the 'Q') or integer value (without the 'Q')
 #' @param print Logical - if \code{TRUE} (default) the claims are printed
 #' @return A list with basic information about the item
@@ -20,11 +19,7 @@ wdgetclaims <- function(qid, print=TRUE) {
 	url <- paste0("http://www.wikidata.org/w/api.php?action=wbgetclaims&format=json&entity=", qid)
 	
 	# execute request
-	raw <- httr::GET(url, config=add_headers("User-agent"="rwikidata"))
-		
-	# parse
-	claim <- httr::content(raw, as="parsed")
-	
+  claim <- query(url, "parsed")
 	if(length(claim$claims)==0) warning("no claims found")
 	else {
 		claim <- claim$claims
