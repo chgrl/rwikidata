@@ -1,7 +1,6 @@
 
-#' Get content of a specific claim
+#' @title Get content of a specific claim
 #'
-#' @import httr
 #' @param qid The Wikidata item qid, as string (including the 'Q') or integer value (without the 'Q') - required unless guid is provided
 #' @param pid The Wikidata property id, as string (including the 'P') or integer value (without the 'P') - required unless guid is provided
 #' @param guid The Wikidata claim guid, as string - required unless qid and pid are provided
@@ -55,12 +54,9 @@ wdclaimcontent <- function(qid, pid, guid, lang="en", print=TRUE, ...) {
 #' @seealso \code{\link{wdclaimcontent}}
 #' @keywords internal
 wdclaimcontent.int <- function(url, lang) {
-	
-	# execute request
-	raw <- httr::GET(url, config=add_headers("User-agent"="rwikidata"))
 		
-	# parse
-	claim <- httr::content(raw, as="parsed")
+	#Retrieve and parse
+  claim <- query(url, "parsed")
 	if(length(claim$claims)==0) warning("claim(s) not found") 
 	claim <- claim$claims
 	n.claims <- length(claim[[1]])
@@ -94,8 +90,7 @@ wdclaimcontent.int <- function(url, lang) {
 			# get commons website
 			url <- paste0("http://commons.wikimedia.org/wiki/File:", file, "?uselang=en")
 			url <- gsub(" ", "%20", url)
-			raw <- GET(url, config=add_headers("User-agent"="rwikidata"))
-			web <- httr::content(raw, as="text")
+      web <- query(url, "text")
 			
 			# get image url
 			web.list <- strsplit(web, "\n")[[1]]
