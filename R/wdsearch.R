@@ -1,7 +1,6 @@
 
 #' Search for Wikidata items
 #'
-#' @import httr
 #' @param search A string to search for
 #' @param lang Language abbreviation (ISO language codes), as string - default is \code{"en"}
 #' @param lim Maximal number of results, as integer - default is \code{10}
@@ -23,11 +22,7 @@ wdsearch <- function(search, lang="en", lim=10, print=TRUE) {
 	url <- paste0("http://www.wikidata.org/w/api.php?action=wbsearchentities&", query)
 	
 	# execute request
-	raw <- httr::GET(url, config=add_headers("User-agent"="rwikidata"))
-	
-	# parse
-	result <- httr::content(raw, as="parsed")
-	
+  result <- query(url, "parsed")
 	if(is.null(result$success)) warning("search failed\n", "code: ", result$error[[1]], " - ", result$error[[2]]) 
 	else {
 		class(result) <- "wdsearch"
