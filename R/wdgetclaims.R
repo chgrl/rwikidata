@@ -19,7 +19,7 @@ wdgetclaims <- function(qid, print=TRUE) {
 	url <- paste0("http://www.wikidata.org/w/api.php?action=wbgetclaims&format=json&entity=", qid)
 	
 	# execute request
-  claim <- query(url, "parsed")
+	claim <- query(url, "parsed")
 	if(length(claim$claims)==0) warning("no claims found")
 	else {
 		claim <- claim$claims

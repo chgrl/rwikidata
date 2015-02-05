@@ -56,7 +56,7 @@ wdclaimcontent <- function(qid, pid, guid, lang="en", print=TRUE, ...) {
 wdclaimcontent.int <- function(url, lang) {
 		
 	#Retrieve and parse
-  claim <- query(url, "parsed")
+	claim <- query(url, "parsed")
 	if(length(claim$claims)==0) warning("claim(s) not found") 
 	claim <- claim$claims
 	n.claims <- length(claim[[1]])
@@ -90,7 +90,7 @@ wdclaimcontent.int <- function(url, lang) {
 			# get commons website
 			url <- paste0("http://commons.wikimedia.org/wiki/File:", file, "?uselang=en")
 			url <- gsub(" ", "%20", url)
-      web <- query(url, "text")
+			web <- query(url, "text")
 			
 			# get image url
 			web.list <- strsplit(web, "\n")[[1]]

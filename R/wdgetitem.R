@@ -34,7 +34,7 @@ wdgetitem <- function(qid, lang="en", print=TRUE) {
 	url <- paste0("http://www.wikidata.org/w/api.php?action=wbgetentities&", qid)
 	
 	# execute request
-  item <- query(url, "parsed")
+	item <- query(url, "parsed")
 	if(is.null(item$success)) warning("failed\n", "code: ", item$error[[1]], " - ", item$error[[2]]) 
 	else {
 		class(item) <- "wdgetitem"

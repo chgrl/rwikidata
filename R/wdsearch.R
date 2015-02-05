@@ -22,7 +22,7 @@ wdsearch <- function(search, lang="en", lim=10, print=TRUE) {
 	url <- paste0("http://www.wikidata.org/w/api.php?action=wbsearchentities&", query)
 	
 	# execute request
-  result <- query(url, "parsed")
+	result <- query(url, "parsed")
 	if(is.null(result$success)) warning("search failed\n", "code: ", result$error[[1]], " - ", result$error[[2]]) 
 	else {
 		class(result) <- "wdsearch"
