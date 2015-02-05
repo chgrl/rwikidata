@@ -21,21 +21,27 @@ wdgetproperty <- function(pid, lang="en", print=TRUE) {
 	url <- paste0("https://www.wikidata.org/wiki/Property%3a", pid, "?uselang=", lang)
 	
 	# execute request
-  prop <- query(url, "text")
+	prop <- query(url, "text")
 	
 	# find a BETTER way here!
-	# <span class="wb-value " dir="auto"> ... </span> 
-	prop.list <- strsplit(prop, "\n")[[1]]								# split prop into single lines
-	prop.val.desc <- prop.list[grep("wb-value ", prop.list)]			# search for lines with "wb-value " -> value [1] + description [2]
-	prop.val.desc <- substr(prop.val.desc, 2, nchar(prop.val.desc)-1)	# remove first/last character of line
-	prop.val.desc <- sub(".*>", "", prop.val.desc)						# remove everything before value
-	prop.val.desc <- sub("<.*", "", prop.val.desc)						# remove everything after value
+	# <span class="wikibase-labelview-text">...</span>
+	# <span class="wikibase-descriptionview-text">...</span> 
+	prop.list <- strsplit(prop, "\n")[[1]]										# split prop into single lines
+	prop.val <- prop.list[grep("wikibase-labelview-text", prop.list)]			# search for special line
+	prop.val <- substr(prop.val, 2, nchar(prop.val)-1)							# remove first/last character of line
+	prop.val <- sub(".*>", "", prop.val)										# remove everything before value
+	prop.val <- sub("<.*", "", prop.val)										# remove everything after value
+	prop.desc <- prop.list[grep("wikibase-descriptionview-text", prop.list)]	# search for special line
+	prop.desc <- substr(prop.desc, 2, nchar(prop.desc)-1)						# remove first/last character of line
+	prop.desc <- sub(".*>", "", prop.desc)										# remove everything before value
+	prop.desc <- sub("<.*", "", prop.desc)										# remove everything after value
 	
-	if(any(prop.val.desc=="")) warning("parsing error")
+	prop <- c(prop.val, prop.desc)
+	if(any(prop=="")) warning("parsing error")
 	else {
-		class(prop.val.desc) <- "wdgetproperty"
-		if(print) print(prop.val.desc)
-		invisible(prop.val.desc)
+		class(prop) <- "wdgetproperty"
+		if(print) print(prop)
+		invisible(prop)
 	}
 }
 
