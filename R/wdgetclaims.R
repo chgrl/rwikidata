@@ -69,7 +69,7 @@ print.wdgetclaims <- function(x, ...) {
 	claim.num <- length(x)
 	claim.id <- names(x)
 	claim.name <- NULL
-	if(claim.num>0) for(i in 1:claim.num) claim.name <- append(claim.name, wdgetproperty(x[i], print=FALSE)[1])
+	if(claim.num>0) for(i in 1:claim.num) claim.name <- append(claim.name, wdgetproperty(names(x)[i], print=FALSE)[1])
 	else stop("no claims found")
 	claim.name[nchar(claim.name)>25] <- paste(substr(claim.name[nchar(claim.name)>25], 1, 25), "...")
 	
@@ -93,7 +93,7 @@ print.wdgetclaims <- function(x, ...) {
 	row.names(claim.tbl) <- c(1:nrow(claim.tbl))
 	claim.tbl <- as.data.frame(claim.tbl)
 	names(claim.tbl) <- c("Property", "Claim", "GUID")
-	
+
 	# get item info
 	item <- NULL
 	item <- wdgetitem(strsplit(toString(claim.tbl$GUID[1]), "$", fixed=TRUE)[[1]][1], print=FALSE)$entities[[1]]$labels[[1]]$value
