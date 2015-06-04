@@ -1,3 +1,7 @@
+#####This project is no longer active. I decided to join forces with Oliver Keyes in the development of [WikidataR](https://github.com/Ironholds/WikidataR). Thanks for using and supporting rwikidata!
+
+
+
 <img src="rwikidata_logo.png" alt="rwikidata" />
 
 R interface to wikidata.org
