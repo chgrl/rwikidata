@@ -16,10 +16,11 @@ http://www.wikidata.org
 
 Install from GitHub
 -------------------
-
-    if(packageVersion("devtools") < 1.6) {
+```
+if(packageVersion("devtools") < 1.6) {
   install.packages("devtools")
 }
 devtools::install_github("chgrl/rwikidata")
+```
 
 Feel free to flattr, if you like rwikidata: <a href="https://flattr.com/submit/auto?user_id=chgrl&amp;url=https%3A%2F%2Fgithub.com/chgrl/rwikidata" target="_blank"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a>
